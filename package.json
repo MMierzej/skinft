@@ -1,0 +1,20 @@
+{
+  "name": "skinft",
+  "version": "1.0.0",
+  "description": "- [ ] node.js Express server basis - [ ] homepage view (based on the sketch) - [ ] products presentation - [ ] user & admin accounts - [ ] login & authentication - [ ] database design & data model - [ ] connection to a real database   ...",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MMierzej/skinft.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/MMierzej/skinft/issues"
+  },
+  "homepage": "https://github.com/MMierzej/skinft#readme"
+}
