@@ -3,13 +3,13 @@
 - [x] node.js Express server basis
 - [x] homepage view (based on the sketch)
 
-Back-end:
+#### Back-end:
 - [ ] sending items selected by itemsOnPage and pageNumber from app to webpage
 - [ ] user & admin accounts
 - [ ] login & authentication
 - [ ] adding filters for items
 
-Front-end:
+#### Front-end:
 - [ ] homepage development
 - [ ] products presentation
 - [ ] viewing items nicely (with nice jquery code)
@@ -18,7 +18,7 @@ Front-end:
 - [ ] item cart
 - [ ] stretchy css
 
-Database:
+#### Database:
 - [ ] database design & data model
 - [ ] setup a connection MySQL
 - [ ] contain all info about items in the DB
