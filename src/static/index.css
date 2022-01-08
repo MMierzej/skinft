@@ -1,0 +1,64 @@
+header
+{
+    width: 100%;
+    height: 80px;
+    background-color: violet;
+    float: left;
+}
+
+aside
+{
+    width: 25%;
+    min-height: 1000px;
+    background-color: purple;
+    float: left;
+}
+
+main
+{
+    width: 75%;
+    min-height: 1000px;
+    background-color: cyan;
+    float: left;
+}
+
+.container
+{
+    width: 100%;
+    float: left;
+    display: flex;
+    flex-wrap: wrap;
+    flex-flow: space-evenly;
+    align-content: space-around;
+    justify-content: center;
+}
+
+footer
+{
+    width: 100%;
+    height: 80px;
+    background-color: aquamarine;
+    float: left;
+}
+
+body
+{
+    margin: 0px;
+    padding: 0px;
+}
+
+.item
+{
+    position: relative;
+    width: 30%;
+    background-color: limegreen;
+    float: left;
+    height: 300px;
+    margin: 5px;
+    border: 2px solid coral;
+}
+
+#buttons
+{
+    float: right;
+}

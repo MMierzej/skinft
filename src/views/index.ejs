@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SKINFT</title>
+    <link rel='stylesheet' type='text/css' href='/index.css'>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script>
+        $(function () {
+            let nextbt = $('#next-page')[0];
+            nextbt.addEventListener('click', async function () {
+                let container = $('.container');
+                //parametry do posta
+                let itemsOnPage = 9; // do pobrania
+                let pageNum = 1; // do pobrania jakos
+                let form = new FormData();
+                form.append('page', pageNum);
+                form.append('itemsOnPage', itemsOnPage);
+
+
+                let result = await fetch('/items', {
+                    method: 'POST',
+                    body: form
+                });
+                result = await result.text();
+                console.log(result);
+                let o = JSON.parse(result);
+                container.html('');
+
+                for(let item of o) {
+                    let a = item.name;
+                    container.append('<div class="item">' + a + '</div>');
+                }
+
+            });
+        });
+
+    </script>
+</head>
+
+<body>
+    <header>Header</header>
+    <aside>Aside</aside>
+    <main>
+        <div class='container'>
+            <!-- <div class='item'></div>
+            <div class='item'></div>
+            <div class='item'></div>
+            <div class='item'></div>
+            <div class='item'></div>
+            <div class='item'></div>
+            <div class='item'></div>
+            <div class='item'></div>
+            <div class='item'></div> -->
+        </div>
+        <div id='buttons'>
+            <button id='prev-page' class='button-arrow'><-</button>
+            <button id='next-page' class='button-arrow'>-></button>
+        </div>
+    </main>
+    <footer>Footer</footer>
+</body>
+
+</html>
