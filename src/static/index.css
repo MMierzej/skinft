@@ -8,18 +8,17 @@ header
 
 aside
 {
-    width: 25%;
-    min-height: 1000px;
+    min-width: 300px;
+    min-height: 400px;
     background-color: purple;
-    float: left;
+    /* float: left; */
 }
 
 main
 {
-    width: 75%;
-    min-height: 1000px;
+    flex-grow: 1;
     background-color: cyan;
-    float: left;
+    /* float: left; */
 }
 
 .container
@@ -31,6 +30,14 @@ main
     flex-flow: space-evenly;
     align-content: space-around;
     justify-content: center;
+}
+
+.big-container
+{
+    display: flex;
+    float: left;
+    width: 100%;
+    align-items: stretch;
 }
 
 footer
@@ -49,16 +56,30 @@ body
 
 .item
 {
+    color: black;
+    text-decoration: none;
     position: relative;
     width: 30%;
-    background-color: limegreen;
+    background-color: lightblue;
     float: left;
     height: 300px;
     margin: 5px;
     border: 2px solid coral;
+    text-align: center;
+}
+
+.item:visited
+{
+    color: black;
+    text-decoration: none;
 }
 
 #buttons
 {
     float: right;
+}
+
+.page-item
+{
+    width: 200px;
 }

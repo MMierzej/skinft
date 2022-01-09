@@ -1,3 +1,4 @@
+const fs = require('fs');
 const ejs = require('ejs');
 const http = require('http');
 const multer = require('multer');
@@ -7,17 +8,19 @@ const app = express();
 let upload = multer();
 
 
-app.set('views', './views');
+app.set('views', './src/views');
 app.set('view engine', 'ejs');
-app.use(express.static('./static'));
+app.use(express.static('./src/static'));
 
 
 let db = [];
+let image = fs.readFileSync('./images/test/2137.png', 'base64');
+
 for (let i = 1; i <= 30; i++) {
     db.push({
         id: i,
         name: 'skin' + i,
-        img: '/dummmy/path/skeen.png',
+        img: 'data:image/png;base64,' + image,
         priceUsd: 2,
         description: 'Iprem Losum'
     })
