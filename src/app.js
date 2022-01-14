@@ -46,6 +46,38 @@ app.get('/item/:id', (req, res) => {
     res.render('item', {item});
 })
 
+app.get('/login', auth, (req, res) => {
+    if(req.logged) {
+        res.render('index'); // + jakis komunikat ze jestesmy zalogowani
+    }
+    res.render('login');
+})
+
+app.get('/register', auth, (req, res) => {
+    if(req.logged) {
+        res.render('index'); // + jakis komunikat ze jestesmy zalogowani
+    }
+    res.render('register');
+})
+
+app.delete('/logout', auth, (req, res) => {
+    if(req.logged) {
+        // usuwamy sesje
+    }
+    res.render('index');
+})
+
+
+function auth(req, res, next) { // tu bedziemy sprawdzac middlewareowo czy ktos jest zalogowany i czy jest adminem
+    if(req.query.session === 'x') {
+        req.logged = true;
+    }
+    else {
+        req.logged = false;
+    }
+    next();
+}
+
 http.createServer(app).listen(3000, () => {
     console.log('Server is running on port 3000...');
 });

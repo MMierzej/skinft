@@ -77,9 +77,22 @@ body
 #buttons
 {
     float: right;
+    padding: 10px;
 }
 
 .page-item
 {
     width: 200px;
+}
+
+.button-arrow
+{
+    width: 40px;
+    height: 40px;
+    font-size: 20px;
+    background-color: grey;
+    color: wheat;
+    outline: 0;
+    cursor: pointer;
+    border-radius: 20px;
 }
