@@ -1,68 +1,38 @@
+'use strict';
+
+require('ejs');
 const fs = require('fs');
-const ejs = require('ejs');
 const http = require('http');
 const multer = require('multer');
 const express = require('express');
-const req = require('express/lib/request');
-const mongoClient = require('mongodb').MongoClient;
-// operacje bazodanowe będą umieszczone w obiekcie
-// odpowiadającym za interakcje z bazą danych
+require('express/lib/request');
 
-const dbUrl = 'mongodb://localhost:27017/test';  // defaultowa testowa baza danych
+require('./db/mongoose');
+const Skin = require('./db/models/skin')
+
 const app = express();
-let upload = multer();
+const upload = multer();
 
 app.set('views', './src/views');
 app.set('view engine', 'ejs');
 app.use(express.static('./src/static'));
 
-
-let fakeDb = [];
-let image = fs.readFileSync('./images/test/2137.png', 'base64');
-
-for (let i = 1; i <= 30; i++) {
-    fakeDb.push({
-        id: i,
-        name: 'skin' + i,
-        img: 'data:image/png;base64,' + image,
-        betterImg: 'data:image/png;base64,' + image, // tymczasowo
-        priceUsd: 2,
-        description: 'Flying fish few by the space station. She was the type of girl that always burnt sugar to show she cared. The hawk didnt understand why the ground squirrels didnt want to be his friend.',
-        state: 'available'
-    })
-}
-
-
 app.get('/', upload.single(), (req, res) => {
-    //req.body.
     res.render('index');
 });
 
-app.post('/items', upload.single(), (req, res) => {
-    // w req.body można później przekazywać filtry zapytania
+app.post('/items', upload.single(), async (req, res) => {
+    // req.body -- filters
+    let pageNo = req.body.pageNo || 0;
+    let skinsOnPage = req.body.skinsOnPage || 9;
 
-    let pageNo = 0;  // numer strony wyświetlanych skinów
-    let skinsOnPage = 9;
-    let resultArr;
-
-    mongoClient.connect(dbUrl, (err, db) => {
-        if (err) throw err;
-        resultArr = db.collection('skins')
-            .find().skip(pageNo * skinsOnPage)
-            .limit(skinsOnPage).toArray();
-    });
-
-    res.json(resultArr);
+    const result = await Skin.find({}).lean().skip(pageNo * skinsOnPage).limit(skinsOnPage);
+    res.json(result);
 });
 
-app.get('/item/:id', (req, res) => {
-    let item;
-
-    mongoClient.connect(dbUrl, (err, db) => {
-        if (err) throw err;
-        item = db.collection('skins').findOne({ id: req.params.id });
-    });
-
+app.get('/item/:name', async (req, res) => {
+    const item = await Skin.findOne({ name: req.params.name });
+    // console.log(item);
     res.render('item', { item });
 });
 
@@ -87,21 +57,36 @@ app.delete('/logout', auth, (req, res) => {
     res.render('index');
 });
 
-app.post('/new-item', upload.single(), auth, (req, res) => {
-    // szkic procedury
-    // przeczytanie body i umieszczenie w bazie danych nowego skina
-    let newSkin = {
-        name: 'skinFromDb'
-    }
+app.get('/new-item', upload.single(), (req, res) => {
+    res.render('new-item');
+});
 
-    mongoClient.connect(dbUrl, (err, db) => {
-        if (err) throw err;
-        db.collection('skins').insertOne(newSkin, (err, res) => {
-            if (err) throw err;
-            console.log('inserted a new skin');
-            db.close();
-        });
+/* TODO */
+app.post('/new-item', upload.single(), async (req, res) => {
+    // FOR TESTING PURPOSES ONLY!
+    // const result = await new Skin({
+    //     name: 'test07',
+    //     thumbnail: fs.readFileSync('./images/test/2137.png', 'base64'),
+    //     description: 'test',
+    //     priceUsd: 999999999,
+    //     status: true
+    // }).save();
+    // console.log(result);
+
+    // TODO: validation [and checking if the skin already exists in the db]
+    const newSkin = new Skin({
+        name: req.body.name,
+        thumbnail: fs.readFileSync('./images/test/2137.png', 'base64'), // base64 generated from the uploaded file
+        description: req.body.description,
+        priceUsd: req.body.price,
+        status: req.body.status
     });
+
+    // the skin itself should be added to a separate folder
+    // skin's file name should be the unique id of the object in the db
+
+    await newSkin.save();
+    res.redirect('/');
 });
 
 

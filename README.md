@@ -7,7 +7,7 @@
 - [ ] sending items selected by itemsOnPage and pageNumber from app to webpage
 - [ ] user & admin accounts
 - [ ] login & authentication
-- [ ] adding filters for items
+- [ ] filters for items
 
 #### Front-end:
 - [ ] homepage development
@@ -19,6 +19,7 @@
 - [ ] stretchy css
 
 #### Database:
-- [ ] database design & data model
-- [ ] setup a connection MySQL
-- [ ] contain all info about items in the DB
+- [x] database design & data model
+- [x] setup a connection (MongoDB + Mongoose)
+- [x] contain all info about items in the DB
+- [ ] separate collection for the proper skins
