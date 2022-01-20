@@ -7,5 +7,5 @@ const dbUrl = `mongodb+srv://dbman:${password}@weppo-project.yolqd.mongodb.net/S
 mongoose.connect(dbUrl, {
     useNewUrlParser: true,
     useUnifiedTopology: true
-}).then(() => console.log('Connected to the DB.'))
+}).then(() => console.log('Database connection established.'))
     .catch((err) => console.log(err));

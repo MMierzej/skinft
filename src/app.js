@@ -159,5 +159,5 @@ function auth(req, res, next) { // tu bedziemy sprawdzac middlewareowo czy ktos 
 }
 
 http.createServer(app).listen(3000, () => {
-    console.log('Server is running on port 3000...');
+    console.log('Server is running on port 3000.');
 });
