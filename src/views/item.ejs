@@ -8,19 +8,23 @@
     <title>SKINFT</title>
     <link rel='stylesheet' type='text/css' href='/item.css'>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <script>
-    
-    </script>
 </head>
 
 <body>
     <header><a href='/'>Header</a></header>
     <main>
-        <p class='name'><%- item.name %></p>
-        <img class='betterImg' src=<%- item.betterImg %>></img>
-        <span class='priceContainer'><p class='priceUsd'><%- item.priceUsd %>$ <button class='cartButton'>ADD TO CART</button></p></span>
-        <p class='description'><%- item.description %></p>
-        
+        <p class='name'>
+            <%- item.name %>
+        </p>
+        <img class='betterImg' src=<%- 'data:image/png;base64,' + item.thumbnail %>></img>
+        <span class='priceContainer'>
+            <p class='priceUsd'>
+                <%- item.priceUsd %>$ <button class='cartButton'>ADD TO CART</button>
+            </p>
+        </span>
+        <p class='description'>
+            <%- item.description %>
+        </p>
     </main>
     <footer>Footer</footer>
 </body>
