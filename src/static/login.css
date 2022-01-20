@@ -29,3 +29,8 @@ table, tr, td
     width: 80px;
     height: 40px;
 }
+
+#error
+{
+    color: red;
+}

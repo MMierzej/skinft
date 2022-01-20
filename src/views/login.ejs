@@ -15,7 +15,7 @@
 
 <body>
     <main>
-        <form>
+        <form method="post" action="/login">
             <table>
                 <tr>
                     <th colspan="2">Login</th>
@@ -30,7 +30,10 @@
                 </tr>
                 <tr>
                     <td></td>
-                    <td><button type="button" id="submit">Login</button></td>
+                    <td><button id="submit">Login</button></td>
+                </tr>
+                <tr>
+                    <td colspan="2"><p id="error"><% if(locals.message) { %> <%= message.text %> <% } %></p></td>
                 </tr>
             </table>
         </form>
