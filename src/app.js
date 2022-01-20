@@ -16,6 +16,8 @@ const upload = multer();
 app.set('views', './src/views');
 app.set('view engine', 'ejs');
 app.use(express.static('./src/static'));
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }))
 
 app.get('/', upload.single(), (req, res) => {
     res.render('index');
@@ -73,13 +75,14 @@ app.post('/new-item', upload.single(), async (req, res) => {
     // }).save();
     // console.log(result);
 
+    // console.log(req.body);
     // TODO: validation [and checking if the skin already exists in the db]
     const newSkin = new Skin({
         name: req.body.name,
         thumbnail: fs.readFileSync('./images/test/2137.png', 'base64'), // base64 generated from the uploaded file
         description: req.body.description,
         priceUsd: req.body.price,
-        status: req.body.status
+        status: req.body.status == 'on'
     });
 
     // the skin itself should be added to a separate folder
