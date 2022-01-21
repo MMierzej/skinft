@@ -54,7 +54,7 @@
 </head>
 
 <body>
-    <header>Header</header>
+    <header>Header <% if(locals.user) { %> <%= user %> <% } %></header>
     <div class='big-container'>
         <aside>Aside</aside>
         <main>

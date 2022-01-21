@@ -18,13 +18,12 @@ app.use(express.static('./src/static'));
 
 app.use(sessions({
     secret: "sekretnyKlucz2137222137", // to trzeba ukrywac
-    saveUninitialized:true,
+    saveUninitialized: true,
     cookie: { maxAge: 1000 * 60 * 60 * 24 * 10 }, // 10 dni
     resave: false 
 }));
 app.use(cookieParser());
-
-const urlencodedParser = bodyParser.urlencoded({ extended: false })
+app.use(bodyParser.urlencoded({ extended: false }));
 
 let db = [];
 let image = fs.readFileSync('./images/test/2137.png', 'base64');
@@ -43,9 +42,13 @@ for (let i = 1; i <= 30; i++) {
 }
 
 
-app.get('/', upload.single(), (req, res) => {
-    //req.body.
-    res.render('index');
+app.get('/', auth, upload.single(), (req, res) => {
+    if(req.session.userid) {
+        res.render('index', {user : req.session.userid});
+    }
+    else {
+        res.render('index');
+    }
 });
 
 app.post('/items', upload.single(), (req, res) => {
@@ -59,18 +62,19 @@ app.get('/item/:id', (req, res) => {
 })
 
 app.get('/login', auth, (req, res) => {
-    if(req.logged) {
-        res.render('index'); // + jakis komunikat ze jestesmy zalogowani
+    if(req.session.userid) {
+        res.redirect('/'); // + jakis komunikat ze jestesmy zalogowani
     }
-    res.render('login');
+    else {
+        res.render('login');
+    }
 });
 
-let sessionUser = {};  // sejse beda zapamietana w bazie danych chyba
-let sessionTime = {};
+// sejse beda zapamietana w bazie danych przy pomocy connect-mongo 
 
-app.post('/login', urlencodedParser, auth, (req, res) => {
-    if(req.logged) {
-        res.render('index'); // + jakis komunikat ze jestesmy zalogowani
+app.post('/login', auth, (req, res) => {
+    if(req.session.userid) {
+        res.redirect('/'); // + jakis komunikat ze jestesmy zalogowani
     }
 
     let validUsername = 'adrian';
@@ -79,14 +83,14 @@ app.post('/login', urlencodedParser, auth, (req, res) => {
     let username = req.body.username;
     let password = req.body.password;
 
-    console.log(req.session);
+    // console.log(req.session);
     // tutaj jakis request do bazy z walidacja
 
     if(username === validUsername && password === validPassword) {  // tymczasowo
         
         let session=req.session;
         session.userid = username;
-        console.log(req.session)
+        //console.log(req.session)
         res.redirect('/');
     }
     else {
@@ -96,34 +100,37 @@ app.post('/login', urlencodedParser, auth, (req, res) => {
 });
 
 app.get('/register', auth, (req, res) => {
-    if(req.logged) {
-        res.render('index'); // + jakis komunikat ze jestesmy zalogowani
+    if(req.session.userid) {
+        res.redirect('/'); // + jakis komunikat ze jestesmy zalogowani
     }
-    res.render('register');
+    else {
+        res.render('register');
+    }
 });
 
 app.post('/register', upload.single(), auth, (req, res) => {
-    if (req.logged) {
-        res.render('index'); // + jakis komunikat ze jestesmy zalogowani
+    if (req.session.userid) {
+        res.redirect('/'); // + jakis komunikat ze jestesmy zalogowani
     }
-
-    // proces tworzenia konta, sprawdzamy czy email lub username nie sa zajete
-    // jesli nie => dodajemy konto do bazy, pamietamy o szyfrowaniu hasla
+    else {
+        // proces tworzenia konta, sprawdzamy czy email lub username nie sa zajete
+        // jesli nie => dodajemy konto do bazy, pamietamy o szyfrowaniu hasla
+        res.redirect('/'); // z komunikatem: konto zostalo utworzone
+    }
     
-    res.render('login') // z komunikatem: konto zostalo utworzone
 });
 
-app.delete('/logout', auth, (req, res) => {
-    if(req.logged) {
+app.get('/logout', auth, (req, res) => {  // chyba tymczasowo get 
+    if(req.session.userid) {
         req.session.destroy();
-        // usuwamy sesje z bazy danych
     }
-    res.render('index');
+    res.redirect('/');
 });
 
 
 function auth(req, res, next) { // tu bedziemy sprawdzac middlewareowo czy ktos jest zalogowany i czy jest adminem
-    if(req.query.session === 'x') {
+
+    if(req.session.userid) {
         req.logged = true;
     }
     else {
