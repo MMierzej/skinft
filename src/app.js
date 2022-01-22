@@ -3,7 +3,6 @@ const ejs = require('ejs');
 const http = require('http');
 const multer = require('multer');
 const express = require('express');
-const bodyParser = require('body-parser')
 const req = require('express/lib/request');
 const sessions = require('express-session');
 const cookieParser = require("cookie-parser");
@@ -20,10 +19,10 @@ app.use(sessions({
     secret: "sekretnyKlucz2137222137", // to trzeba ukrywac
     saveUninitialized: true,
     cookie: { maxAge: 1000 * 60 * 60 * 24 * 10 }, // 10 dni
-    resave: false 
+    resave: false
 }));
 app.use(cookieParser());
-app.use(bodyParser.urlencoded({ extended: false }));
+app.use(express.urlencoded({ extended: false }));
 
 let db = [];
 let image = fs.readFileSync('./images/test/2137.png', 'base64');
