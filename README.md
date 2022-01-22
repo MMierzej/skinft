@@ -8,6 +8,7 @@
 - [ ] user & admin accounts
 - [ ] login & authentication
 - [ ] filters for items
+- [ ] sessions container `connect-mongo`
 
 #### Front-end:
 - [ ] homepage development
@@ -17,9 +18,13 @@
 - [ ] item site with extended description
 - [ ] item cart
 - [ ] stretchy css
+- [ ] side pannel with filters
 
 #### Database:
 - [x] database design & data model
 - [x] setup a connection (MongoDB + Mongoose)
 - [x] contain all info about items in the DB
 - [ ] separate collection for the proper skins
+- [ ] sessions collection (`connect-mongo`)
+- [ ] users collection
+- [ ] delete, modify items
