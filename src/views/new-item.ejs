@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SKINFT</title>
+    <link rel='stylesheet' type='text/css' href='/register.css'>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script>
+
+    </script>
+</head>
+
+<body>
+    <main>
+        <form action="/new-item" method="post">
+            <table>
+                <tr>
+                    <th colspan="2">New skin</th>
+                </tr>
+                <tr>
+                    <td><label>Name</label></td>
+                    <td><input type="text" id="name" name="name" required></td>
+                </tr>
+                <tr>
+                    <td><label>Thumbnail</label></td>
+                    <td><input type="file" id="thumbnail" name="thumbnail"></td>
+                </tr>
+                <tr>
+                    <td><label>Description</td><label></td>
+                    <td><input type="text" id="description" name="description" required></td>
+                </tr>
+                <tr>
+                    <td><label>Price in USD</label></td>
+                    <td><input type="number" min="0" id="price" name="price" required></td>
+                </tr>
+                <tr>
+                    <td><label>Availability</label></td>
+                    <td><input type="checkbox" id="status" name="status"></td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td><input type="submit" id="submit" value="Add"></td>
+                </tr>
+            </table>
+        </form>
+    </main>
+</body>
+
+</html>
