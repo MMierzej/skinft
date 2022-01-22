@@ -24,7 +24,7 @@
 - [x] database design & data model
 - [x] setup a connection (MongoDB + Mongoose)
 - [x] contain all info about items in the DB
-- [ ] separate collection for the proper skins
+- [ ] separate collection for proper skins
 - [ ] sessions collection (`connect-mongo`)
 - [ ] users collection
 - [ ] delete, modify items
