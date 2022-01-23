@@ -4,11 +4,11 @@
 - [x] homepage view (based on the sketch)
 
 #### Back-end:
+- [x] sessions container `connect-mongo`
 - [ ] sending items selected by itemsOnPage and pageNumber from app to webpage
 - [ ] user & admin accounts
 - [ ] login & authentication
 - [ ] filters for items
-- [ ] sessions container `connect-mongo`
 
 #### Front-end:
 - [ ] homepage development
@@ -24,7 +24,7 @@
 - [x] database design & data model
 - [x] setup a connection (MongoDB + Mongoose)
 - [x] contain all info about items in the DB
+- [x] sessions collection (`connect-mongo`)
 - [ ] separate collection for proper skins
-- [ ] sessions collection (`connect-mongo`)
 - [ ] users collection
 - [ ] delete, modify items
