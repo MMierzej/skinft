@@ -6,9 +6,10 @@ const http = require('http');
 const multer = require('multer');
 const express = require('express');
 const sessions = require('express-session');
-const cookieParser = require("cookie-parser");
+const MongoStore = require('connect-mongo');
+const cookieParser = require('cookie-parser');
 
-require('./db/mongoose');
+const { dbConn } = require('./db/mongoose');
 const Skin = require('./db/models/skin');
 
 const app = express();
@@ -19,14 +20,17 @@ app.set('view engine', 'ejs');
 app.use(express.static('./src/static'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(sessions({
-    secret: "sekretnyKlucz2137222137", // to trzeba ukrywac
-    saveUninitialized: true,
-    cookie: { maxAge: 1000 * 60 * 60 * 24 * 10 }, // 10 dni
-    resave: false
-}));
 app.use(cookieParser());
-app.use(express.urlencoded({ extended: false }));
+dbConn.once('open', () => {
+    app.use(sessions({
+        secret: "sekretnyKlucz2137222137", // to be hidden
+        saveUninitialized: true,
+        cookie: { maxAge: 1000 * 60 * 60 * 24 * 1 }, // a day
+        resave: false,
+        store: MongoStore.create({ client: dbConn.getClient() })
+    }));
+});
+
 
 app.get('/', auth, upload.single(), (req, res) => {
     if (req.session.userid) {
