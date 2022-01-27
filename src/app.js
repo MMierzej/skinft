@@ -77,9 +77,15 @@ const { createHash } = require('crypto');
         { name: 'thumbnail', maxCount: 1 },
         { name: 'skin', maxCount: 1 }
     ]), async (req, res) => {
-        console.log(req.files);
         const thumbnail = req.files.thumbnail[0];
         const skin = req.files.skin[0];
+
+        const thumbnailB64 = fs.readFileSync(thumbnail.path, 'base64');
+        const skinB64 = fs.readFileSync(skin.path, 'base64');
+
+        // file deletion
+        fs.unlinkSync(thumbnail.path);
+        fs.unlinkSync(skin.path);
 
         if (null !== await Skin.findOne({ name: req.body.name }).exec()) {
             res.render('new-item', { message: 'Skin with such name already exists.' });
@@ -88,7 +94,7 @@ const { createHash } = require('crypto');
 
         const newSkin = new Skin({
             name: req.body.name,
-            thumbnail: fs.readFileSync(thumbnail.path, 'base64'), // base64 generated from the uploaded file
+            thumbnail: thumbnailB64, // base64 generated from the uploaded file
             description: req.body.description,
             priceUsd: req.body.price,
             status: req.body.status == 'on'
@@ -97,9 +103,6 @@ const { createHash } = require('crypto');
         // TODO:
         // the skin itself should land in a separate collection
         // under the same name as the Skin object
-
-        fs.unlinkSync(thumbnail.path);
-        fs.unlinkSync(skin.path);
 
         await newSkin.save();
         res.redirect('/');
