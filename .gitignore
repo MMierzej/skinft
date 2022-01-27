@@ -3,6 +3,4 @@ node_modules/
 .npm/
 .env/
 mongodb-password*
-# everything in uploads instead of the folder uploads,
-# because the server relies upon the existence of that folder
-uploads/*
+secret-data.json

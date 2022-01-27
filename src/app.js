@@ -19,7 +19,7 @@ const { createHash } = require('crypto');
     const app = express();
     const fileStorageEngine = multer.diskStorage({
         destination: (req, file, cb) => {
-            cb(null, "./uploads");
+            cb(null, "./images");
         },
         filename: (req, file, cb) => {
             cb(null, Date.now() + "--" + file.originalname);
@@ -34,7 +34,7 @@ const { createHash } = require('crypto');
     app.use(express.urlencoded({ extended: true }));
     app.use(cookieParser());
     app.use(sessions({
-        secret: "sekretnyKlucz2137222137", // to be hidden
+        secret: JSON.parse(fs.readFileSync('./src/secret-data.json', 'utf-8')).sessionSecret,
         saveUninitialized: true,
         cookie: { maxAge: 1000 * 60 * 60 * 24 * 1 }, // a day
         resave: false,
@@ -63,7 +63,7 @@ const { createHash } = require('crypto');
     });
 
     app.get('/item/:name', async (req, res) => {
-        const item = await Skin.findOne({ name: req.params.name });
+        const item = await Skin.findOne({ name: req.params.name }).lean().exec();
         // console.log(item);
         res.render('item', { item });
     });
@@ -72,7 +72,7 @@ const { createHash } = require('crypto');
         res.render('new-item');
     });
 
-    /* TODO */
+    /* TODO: admin-only endpoint */
     app.post('/new-item', upload.fields([
         { name: 'thumbnail', maxCount: 1 },
         { name: 'skin', maxCount: 1 }
@@ -91,6 +91,7 @@ const { createHash } = require('crypto');
             status: req.body.status == 'on'
         });
 
+        // TODO:
         // the skin itself should land in a separate collection
         // under the same name as the Skin object
 
@@ -109,8 +110,6 @@ const { createHash } = require('crypto');
         }
     });
 
-    // sejse beda zapamietana w bazie danych przy pomocy connect-mongo 
-
     app.post('/login', auth, async (req, res) => {
         if (req.session.userid) {
             res.redirect('/?message=' + 'Jesteś już zalogowany');
@@ -118,9 +117,7 @@ const { createHash } = require('crypto');
         
         const username = req.body.username;
         const password = createHash('sha256').update(req.body.password).digest('hex');
-
         const account = await User.findOne({ username }).lean().exec();
-        // console.log(account);
 
         if (account !== null && account.password === password) {
             let session = req.session;
@@ -134,7 +131,7 @@ const { createHash } = require('crypto');
 
     app.get('/register', auth, (req, res) => {
         if (req.session.userid) {
-            res.redirect('/?message=' + 'Jesteś już zalogowany'); // + jakis komunikat ze jestesmy zalogowani
+            res.redirect('/?message=' + 'Jesteś już zalogowany');
         } else {
             res.render('register');
         }
@@ -144,11 +141,8 @@ const { createHash } = require('crypto');
         console.log(req.body);
 
         if (req.session.userid) {
-            res.redirect('/?message=' + 'Jesteś już zalogowany'); // + jakis komunikat ze jestesmy zalogowani
+            res.redirect('/?message=' + 'Jesteś już zalogowany');
         } else {
-            // proces tworzenia konta, sprawdzamy czy email lub username nie sa zajete
-            // jesli nie => dodajemy konto do bazy, pamietamy o szyfrowaniu hasla
-
             if (req.body.password !== req.body.cpassword) {
                 res.render('register', { message: 'Passwords are not matching.' });
                 return;
@@ -173,7 +167,7 @@ const { createHash } = require('crypto');
             });
 
             await newUser.save();
-            res.redirect('/?message=' + 'Konto zostało utworzone'); // z komunikatem: konto zostalo utworzone
+            res.redirect('/?message=' + 'Konto zostało utworzone');
         }
     });
 

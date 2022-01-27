@@ -6,9 +6,9 @@
 #### Back-end:
 - [x] sessions container `connect-mongo`
 - [x] user & admin accounts
-- [ ] login & authentication
+- [x] login & authentication
 - [ ] filters for fetching items
-- [ ] delete & modyfy user accounts
+- [ ] delete & modify user accounts
 - [ ] admin endpoints
 
 #### Front-end:
