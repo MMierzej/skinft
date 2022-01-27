@@ -6,56 +6,57 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SKINFT</title>
+    <link rel='stylesheet' type='text/css' href='/public.css'>
     <link rel='stylesheet' type='text/css' href='/index.css'>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script>
         $(function () {
-            let nextbt = $('#next-page')[0];
-            nextbt.addEventListener('click', async function () {
-                let container = $('.container');
-                //parametry do posta
-                let itemsOnPage = 9; // do pobrania
-                let pageNum = 1; // do pobrania jakos
-                let form = new FormData();
-                form.append('page', pageNum);
-                form.append('itemsOnPage', itemsOnPage);
+                let nextbt = $('#next-page')[0];
+                nextbt.addEventListener('click', async function () {
+                    let container = $('.container');
+                    //parametry do posta
+                    let itemsOnPage = 9; // do pobrania
+                    let pageNum = 1; // do pobrania jakos
+                    let form = new FormData();
+                    form.append('page', pageNum);
+                    form.append('itemsOnPage', itemsOnPage);
 
 
-                let result = await fetch('/items', {
-                    method: 'POST',
-                    body: form
+                    let result = await fetch('/items', {
+                        method: 'POST',
+                        body: form
+                    });
+                    result = await result.text();
+                    console.log(result);
+                    let o = JSON.parse(result);
+                    container.html('');
+
+                    for (let item of o) {
+                        container.append($('<a>', {
+                            class: 'item',
+                            href: '/item/' + item.name,
+                            title: 'item in shop: ' + item.name
+                        }).append($('<p>', {
+                            text: item.name
+                        })).append($('<img>', {
+                            class: 'page-item',
+                            src: 'data:image/png;base64,' + item.thumbnail
+                        })).append($('<p>', {
+                            class: 'price-tag',
+                            text: 'USD: ' + item.priceUsd + '$'
+                        })))
+                    }
+
                 });
-                result = await result.text();
-                console.log(result);
-                let o = JSON.parse(result);
-                container.html('');
-
-                for (let item of o) {
-                    container.append($('<a>', {
-                        class: 'item',
-                        href: '/item/' + item.name,
-                        title: 'item in shop: ' + item.name
-                    }).append($('<p>', {
-                        text: item.name
-                    })).append($('<img>', {
-                        class: 'page-item',
-                        src: 'data:image/png;base64,' + item.thumbnail
-                    })).append($('<p>', {
-                        class: 'price-tag',
-                        text: 'USD: ' + item.priceUsd + '$'
-                    })))
-                }
-
+                nextbt.click();
             });
-            nextbt.click();
-        });
     </script>
 </head>
 
 <body>
-    <header>Header <% if(locals.user) { %> <%= user %> <% } %></header>
+    <%- include('header', { user: locals.user }) %>
     <div class='big-container'>
-        <aside>Aside</aside>
+        <aside></aside>
         <main>
             <div id='buttons'>
                 <button id='prev-page' class='button-arrow'><-</button>
@@ -69,7 +70,10 @@
             </div>
         </main>
     </div>
-    <footer>Footer</footer>
+    <%- include('footer', { user: locals.user }) %>
+    <% if (locals.message) { %>
+        <script>alert("<%= locals.message %>")</script>
+    <% } %>
 </body>
 
 </html>

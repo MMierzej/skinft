@@ -3,4 +3,6 @@ node_modules/
 .npm/
 .env/
 mongodb-password*
-uploads/
+# everything in uploads instead of the folder uploads,
+# because the server relies upon the existence of that folder
+uploads/*

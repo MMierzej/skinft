@@ -6,6 +6,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SKINFT</title>
+    <link rel='stylesheet' type='text/css' href='/public.css'>
     <link rel='stylesheet' type='text/css' href='/register.css'>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script>
@@ -14,6 +15,9 @@
 </head>
 
 <body>
+    <%- include('header', {
+        user: locals.user
+    }) %>
     <main>
         <form action="/new-item" method="post" enctype="multipart/form-data">
             <table>
@@ -51,6 +55,9 @@
             </table>
         </form>
     </main>
+    <%- include('footer', {
+        user: locals.user
+    }) %>
 </body>
 
 </html>

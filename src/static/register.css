@@ -1,7 +1,7 @@
 main
 {
     width: 100%;
-    background-color: lightblue;
+    background-color: #81b7d2;
     min-height: 300px;
     height: 100vh;
     float: left;
@@ -9,13 +9,6 @@ main
     justify-content: center;
     align-items: center;
     
-}
-
-body
-{
-    margin: 0px;
-    padding: 0px;
-    font-family: Arial, Helvetica, sans-serif;
 }
 
 table, tr, td

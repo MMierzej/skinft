@@ -5,26 +5,27 @@
 
 #### Back-end:
 - [x] sessions container `connect-mongo`
-- [ ] sending items selected by itemsOnPage and pageNumber from app to webpage
-- [ ] user & admin accounts
+- [x] user & admin accounts
 - [ ] login & authentication
-- [ ] filters for items
+- [ ] filters for fetching items
+- [ ] delete & modyfy user accounts
+- [ ] admin endpoints
 
 #### Front-end:
-- [ ] homepage development
-- [ ] products presentation
-- [ ] viewing items nicely (with nice jquery code)
-- [ ] filling header and footer
-- [ ] item site with extended description
-- [ ] item cart
-- [ ] stretchy css
+- [x] item page with extended description
+- [x] homepage development
+- [x] products presentation
+- [x] filling header and footer
+- [x] stretchy css
+- [ ] shopping cart
 - [ ] side pannel with filters
+- [ ] admin endpoints
 
 #### Database:
 - [x] database design & data model
 - [x] setup a connection (MongoDB + Mongoose)
 - [x] contain all info about items in the DB
 - [x] sessions collection (`connect-mongo`)
+- [x] users collection
 - [ ] separate collection for proper skins
-- [ ] users collection
-- [ ] delete, modify items
+- [ ] delete & modify documents

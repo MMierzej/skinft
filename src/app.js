@@ -8,10 +8,13 @@ const express = require('express');
 const sessions = require('express-session');
 const MongoStore = require('connect-mongo');
 const cookieParser = require('cookie-parser');
+const { createHash } = require('crypto');
+
 
 (async () => {
     const dbConn = await require('./db/mongoose')();  // function call!
     const Skin = require('./db/models/skin');
+    const User = require('./db/models/user');
 
     const app = express();
     const fileStorageEngine = multer.diskStorage({
@@ -43,7 +46,7 @@ const cookieParser = require('cookie-parser');
         if (req.session.userid) {
             res.render('index', { user: req.session.userid });
         } else {
-            res.render('index');
+            res.render('index', { message: req.query.message });
         }
     });
 
@@ -100,7 +103,7 @@ const cookieParser = require('cookie-parser');
 
     app.get('/login', auth, (req, res) => {
         if (req.session.userid) {
-            res.redirect('/'); // + jakis komunikat ze jestesmy zalogowani
+            res.redirect('/?message=' + 'Jesteś już zalogowany');
         } else {
             res.render('login');
         }
@@ -108,46 +111,69 @@ const cookieParser = require('cookie-parser');
 
     // sejse beda zapamietana w bazie danych przy pomocy connect-mongo 
 
-    app.post('/login', auth, (req, res) => {
+    app.post('/login', auth, async (req, res) => {
         if (req.session.userid) {
-            res.redirect('/'); // + jakis komunikat ze jestesmy zalogowani
+            res.redirect('/?message=' + 'Jesteś już zalogowany');
         }
+        
+        const username = req.body.username;
+        const password = createHash('sha256').update(req.body.password).digest('hex');
 
-        let validUsername = 'adrian';
-        let validPassword = 'taxi';
+        const account = await User.findOne({ username }).lean().exec();
+        // console.log(account);
 
-        let username = req.body.username;
-        let password = req.body.password;
-
-        // console.log(req.session);
-        // tutaj jakis request do bazy z walidacja
-
-        if (username === validUsername && password === validPassword) {  // tymczasowo
+        if (account !== null && account.password === password) {
             let session = req.session;
             session.userid = username;
-            //console.log(req.session)
-            res.redirect('/');
+            session.admin = account.admin;
+            res.redirect('/?message=' + 'Zalogowano');
         } else {
-            let message = { text: 'zly login lub haslo' };
-            res.render('login', { message });
+            res.render('login', { message: 'Invalid login or password.' });
         }
     });
 
     app.get('/register', auth, (req, res) => {
         if (req.session.userid) {
-            res.redirect('/'); // + jakis komunikat ze jestesmy zalogowani
+            res.redirect('/?message=' + 'Jesteś już zalogowany'); // + jakis komunikat ze jestesmy zalogowani
         } else {
             res.render('register');
         }
     });
 
-    app.post('/register', upload.single(), auth, (req, res) => {
+    app.post('/register', upload.single(), auth, async (req, res) => {
+        console.log(req.body);
+
         if (req.session.userid) {
-            res.redirect('/'); // + jakis komunikat ze jestesmy zalogowani
+            res.redirect('/?message=' + 'Jesteś już zalogowany'); // + jakis komunikat ze jestesmy zalogowani
         } else {
             // proces tworzenia konta, sprawdzamy czy email lub username nie sa zajete
             // jesli nie => dodajemy konto do bazy, pamietamy o szyfrowaniu hasla
-            res.redirect('/'); // z komunikatem: konto zostalo utworzone
+
+            if (req.body.password !== req.body.cpassword) {
+                res.render('register', { message: 'Passwords are not matching.' });
+                return;
+            }
+
+            if (null !== await User.findOne({ username: req.body.username }).exec()) {
+                res.render('register', { message: 'Username taken.' });
+                return;
+            }
+            if (null !== await User.findOne({ email: req.body.email }).exec()) {
+                res.render('register', { message: 'Email taken.' });
+                return;
+            }
+
+            const newUser = new User({
+                name: req.body.name,
+                username: req.body.username,
+                email: req.body.email,
+                password: createHash('sha256').update(req.body.password).digest('hex'),
+                creationTime: new Date(),
+                admin: false
+            });
+
+            await newUser.save();
+            res.redirect('/?message=' + 'Konto zostało utworzone'); // z komunikatem: konto zostalo utworzone
         }
     });
 

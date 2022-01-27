@@ -27,7 +27,8 @@
     "http-server": "^14.0.0",
     "mongodb": "^4.3.0",
     "mongoose": "^6.1.6",
-    "multer": "^1.4.4"
+    "multer": "^1.4.4",
+    "nodemon": "^2.0.15"
   },
   "devDependencies": {
     "eslint": "^8.7.0"

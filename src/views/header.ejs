@@ -1,0 +1,8 @@
+<header><div class='distance'>
+    <a href="/" class='headButton'>SKINFT</a>
+    <% if (!locals.user) { %> <a href='/register' class='headButton'>Register</a> <a href='/login' class='headButton'>Login</a> <% } %>
+    <% if (locals.user) { %> <a href='/logout' class='headButton'>Logout</a> <% } %>
+    <% if (true) { %> <a href='/new-item' class='headButton'>Add item</a> <% } %>
+
+    <% if (locals.user) { %> <%= "Welcome " + user %> <% } %>
+</div></header>

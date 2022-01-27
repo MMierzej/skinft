@@ -6,12 +6,15 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SKINFT</title>
+    <link rel='stylesheet' type='text/css' href='/public.css'>
     <link rel='stylesheet' type='text/css' href='/item.css'>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 </head>
 
 <body>
-    <header><a href='/'>Header</a></header>
+    <%- include('header', {
+        user: locals.user
+    }) %>
     <main>
         <p class='name'>
             <%- item.name %>
@@ -26,7 +29,9 @@
             <%- item.description %>
         </p>
     </main>
-    <footer>Footer</footer>
+    <%- include('footer', {
+        user: locals.user
+    }) %>
 </body>
 
 </html>

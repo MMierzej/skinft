@@ -6,6 +6,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SKINFT</title>
+    <link rel='stylesheet' type='text/css' href='/public.css'>
     <link rel='stylesheet' type='text/css' href='/login.css'>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script>
@@ -14,6 +15,9 @@
 </head>
 
 <body>
+    <%- include('header', {
+        user: locals.user
+    }) %>
     <main>
         <form method="post" action="/login">
             <table>
@@ -33,11 +37,14 @@
                     <td><button id="submit">Login</button></td>
                 </tr>
                 <tr>
-                    <td colspan="2"><p id="error"><% if(locals.message) { %> <%= message.text %> <% } %></p></td>
+                    <td colspan="2"><p id="error"><% if (locals.message) { %> <%= message %> <% } %></p></td>
                 </tr>
             </table>
         </form>
     </main>
+    <%- include('footer', {
+        user: locals.user
+    }) %>
 </body>
 
 </html>
