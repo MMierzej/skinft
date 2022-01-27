@@ -52,6 +52,9 @@
                     <td></td>
                     <td><input type="submit" id="submit" value="Add"></td>
                 </tr>
+                <tr>
+                    <td colspan="2"><p id="error"><% if (locals.message) { %> <%= message %> <% } %></p></td>
+                </tr>
             </table>
         </form>
     </main>

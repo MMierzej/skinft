@@ -81,7 +81,10 @@ const { createHash } = require('crypto');
         const thumbnail = req.files.thumbnail[0];
         const skin = req.files.skin[0];
 
-        // TODO: validation [and checking if the skin already exists in the db]
+        if (null !== await Skin.findOne({ name: req.body.name }).exec()) {
+            res.render('new-item', { message: 'Skin with such name already exists.' });
+            return;
+        }
 
         const newSkin = new Skin({
             name: req.body.name,
