@@ -15,7 +15,7 @@
 
 <body>
     <main>
-        <form action="/new-item" method="post">
+        <form action="/new-item" method="post" enctype="multipart/form-data">
             <table>
                 <tr>
                     <th colspan="2">New skin</th>
@@ -26,7 +26,11 @@
                 </tr>
                 <tr>
                     <td><label>Thumbnail</label></td>
-                    <td><input type="file" id="thumbnail" name="thumbnail"></td>
+                    <td><input type="file" id="thumbnail" name="thumbnail" required></td>
+                </tr>
+                <tr>
+                    <td><label>Skin</label></td>
+                    <td><input type="file" id="skin" name="skin" required></td>
                 </tr>
                 <tr>
                     <td><label>Description</td><label></td>

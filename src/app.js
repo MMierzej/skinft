@@ -14,7 +14,15 @@ const cookieParser = require('cookie-parser');
     const Skin = require('./db/models/skin');
 
     const app = express();
-    const upload = multer();
+    const fileStorageEngine = multer.diskStorage({
+        destination: (req, file, cb) => {
+            cb(null, "./uploads");
+        },
+        filename: (req, file, cb) => {
+            cb(null, Date.now() + "--" + file.originalname);
+        }
+    });
+    const upload = multer({ storage: fileStorageEngine });
 
     app.set('views', './src/views');
     app.set('view engine', 'ejs');
@@ -42,7 +50,7 @@ const cookieParser = require('cookie-parser');
     app.post('/items', upload.single(), async (req, res) => {
         // req.body -- filters
         let pageNo = req.body.pageNo || 0;
-        let skinsOnPage = req.body.skinsOnPage || 9;
+        let skinsOnPage = req.body.skinsOnPage || 18;
 
         const result = await Skin.find({})
             .lean()
@@ -62,29 +70,29 @@ const cookieParser = require('cookie-parser');
     });
 
     /* TODO */
-    app.post('/new-item', upload.single(), async (req, res) => {
-        // FOR TESTING PURPOSES ONLY!
-        // const result = await new Skin({
-        //     name: 'test07',
-        //     thumbnail: fs.readFileSync('./images/test/2137.png', 'base64'),
-        //     description: 'test',
-        //     priceUsd: 999999999,
-        //     status: true
-        // }).save();
-        // console.log(result);
+    app.post('/new-item', upload.fields([
+        { name: 'thumbnail', maxCount: 1 },
+        { name: 'skin', maxCount: 1 }
+    ]), async (req, res) => {
+        console.log(req.files);
+        const thumbnail = req.files.thumbnail[0];
+        const skin = req.files.skin[0];
 
-        // console.log(req.body);
         // TODO: validation [and checking if the skin already exists in the db]
+
         const newSkin = new Skin({
             name: req.body.name,
-            thumbnail: fs.readFileSync('./images/test/2137.png', 'base64'), // base64 generated from the uploaded file
+            thumbnail: fs.readFileSync(thumbnail.path, 'base64'), // base64 generated from the uploaded file
             description: req.body.description,
             priceUsd: req.body.price,
             status: req.body.status == 'on'
         });
 
-        // the skin itself should be added to a separate folder
-        // skin's file name should be the unique id of the object in the db
+        // the skin itself should land in a separate collection
+        // under the same name as the Skin object
+
+        fs.unlinkSync(thumbnail.path);
+        fs.unlinkSync(skin.path);
 
         await newSkin.save();
         res.redirect('/');
