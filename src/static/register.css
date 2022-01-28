@@ -22,3 +22,9 @@ table, tr, td
     width: 80px;
     height: 40px;
 }
+
+.tinyImg
+{
+    width: 100px;
+    max-height: 100px;
+}

@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SKINFT</title>
+    <link rel='stylesheet' type='text/css' href='/public.css'>
+    <link rel='stylesheet' type='text/css' href='/register.css'>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+</head>
+
+<body>
+    <%- include('header', {
+        user: locals.user
+    }) %>
+    <main>
+        <form action="/edit/<%- item.name %>" method="post" enctype="multipart/form-data">
+            <table>
+                <tr>
+                    <th colspan="2">Edit skin</th>
+                </tr>
+                <tr>
+                    <td><label>Name</label></td>
+                    <td><input type="text" id="name" name="name" value="<%- item.name %>" required></td>
+                </tr>
+                <tr>
+                    <td><label>Thumbnail</label></td>
+                    <td><input type="file" id="thumbnail" name="thumbnail"></td>
+                </tr>
+                <tr>
+                    <td colspan="2"><img class='tinyImg' src=<%- 'data:image/png;base64,' + item.thumbnail %>></img>
+                </tr>
+                <tr>
+                    <td><label>Skin</label></td>
+                    <td><input type="file" id="skin" name="skin"></td>
+                </tr>
+                <tr>
+                    <td colspan="2"><img class='tinyImg' src=<%- 'data:image/png;base64,' + item.thumbnail %>></img>
+                </tr>
+                <tr>
+                    <td><label>Description</td><label></td>
+                    <td><input type="text" id="description" name="description" value="<%- item.description %>" required></td>
+                </tr>
+                <tr>
+                    <td><label>Price in USD</label></td>
+                    <td><input type="number" min="0" id="price" name="price" value="<%- item.priceUsd %>" required></td>
+                </tr>
+                <tr>
+                    <td><label>Availability</label></td>
+                    <td><input type="checkbox" id="status" name="status" <% if (item.status) { %> checked <% } %> ></td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td><input type="submit" id="submit" value="Update"></td>
+                </tr>
+                <tr>
+                    <td colspan="2"><p id="error"><% if (locals.message) { %> <%= message %> <% } %></p></td>
+                </tr>
+            </table>
+        </form>
+    </main>
+    <%- include('footer', {
+        user: locals.user
+    }) %>
+</body>
+
+</html>

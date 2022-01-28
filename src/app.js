@@ -44,7 +44,7 @@ const { createHash } = require('crypto');
 
     app.get('/', auth, upload.single(), (req, res) => {
         if (req.session.userid) {
-            res.render('index', { user: req.session.userid });
+            res.render('index', { user: req.session.userid, admin: req.session.admin });
         } else {
             res.render('index', { message: req.query.message });
         }
@@ -64,12 +64,22 @@ const { createHash } = require('crypto');
 
     app.get('/item/:name', async (req, res) => {
         const item = await Skin.findOne({ name: req.params.name }).lean().exec();
-        // console.log(item);
-        res.render('item', { item });
+        if (item === null) {
+            res.redirect('/'); // nie ma takiego itemu
+        } else if (req.session.admin) {
+            res.render('item-edit', { item, user: req.session.userid, admin: req.session.admin }); 
+        } else {
+            res.render('item', { item, user: req.session.userid, admin: req.session.admin });
+        }
     });
 
     app.get('/new-item', upload.single(), (req, res) => {
-        res.render('new-item');
+        if (req.session.admin) {
+            res.render('new-item', { user: req.session.userid, admin: req.session.admin });
+        } else {
+            res.redirect('/');
+        }
+        
     });
 
     /* TODO: admin-only endpoint */
@@ -88,7 +98,7 @@ const { createHash } = require('crypto');
         fs.unlinkSync(skin.path);
 
         if (null !== await Skin.findOne({ name: req.body.name }).exec()) {
-            res.render('new-item', { message: 'Skin with such name already exists.' });
+            res.render('new-item', { message: 'Skin with such name already exists.', user: req.session.userid, admin: req.session.admin });
             return;
         }
 
@@ -106,6 +116,49 @@ const { createHash } = require('crypto');
 
         await newSkin.save();
         res.redirect('/');
+    });
+
+    app.post('/edit/:name', upload.fields([  // chcialem zeby tutaj byl PUT, ale w html form nie ma :(
+        { name: 'thumbnail', maxCount: 1 },
+        { name: 'skin', maxCount: 1 }
+    ]), async (req, res) => {
+        let thumbnail;
+        let skin;
+        if (req.files.thumbnail) {
+            thumbnail = fs.readFileSync(req.files.thumbnail[0].path, 'base64');
+            fs.unlinkSync(req.files.thumbnail[0].path);
+        }
+        if (req.files.skin) {
+            skin = fs.readFileSync(req.files.skin[0].path, 'base64');
+            fs.unlinkSync(req.files.skin[0].path);
+        }
+        let item = await Skin.findOne({ name: req.params.name }).lean().exec();
+        if (item === null) {
+            res.render('item-edit', { item, message: 'Error', user: req.session.userid, admin: req.session.admin });
+            return;
+        }
+        const checkName = await Skin.findOne({ name: req.body.name }).lean().exec();
+        if (req.body.name !== req.params.name && checkName !== null) {
+            res.render('item-edit', { item, message: 'Name is occupied', user: req.session.userid, admin: req.session.admin });
+            return;
+        }
+        thumbnail = thumbnail || item.thumbnail;
+        skin = skin || item.thumbnail;
+        if (!thumbnail || !skin) {
+            res.render('item-edit', { item, message: 'Missing skin and thumbnail', user: req.session.userid, admin: req.session.admin });
+            return;
+        }
+
+        await Skin.findOneAndReplace({ name: req.params.name }, {
+            name: req.body.name,
+            thumbnail: thumbnail, // base64 generated from the uploaded file
+            description: req.body.description,
+            priceUsd: req.body.price,
+            status: req.body.status == 'on'
+        }).lean().exec();
+        item = await Skin.findOne({ name: req.body.name }).lean().exec();
+
+        res.render('item-edit', { item, message: 'Success', user: req.session.userid, admin: req.session.admin });
     });
 
     app.get('/login', auth, (req, res) => {
@@ -184,6 +237,13 @@ const { createHash } = require('crypto');
         res.redirect('/');
     });
 
+    app.get('/admin', (req, res) => {
+        if (req.session.admin) {
+            res.render('admin', { user: req.session.userid, admin: req.session.admin }); // TODO
+        } else {
+            res.redirect('/');
+        }
+    });
 
     function auth(req, res, next) { // tu bedziemy sprawdzac middlewareowo czy ktos jest zalogowany i czy jest adminem
         if (req.session.userid) {
