@@ -13,8 +13,9 @@ const { createHash } = require('crypto');
 
 (async () => {
     const dbConn = await require('./db/mongoose')();  // function call!
-    const Skin = require('./db/models/skin');
-    const User = require('./db/models/user');
+    const { Skin } = require('./db/models/skin');
+    const { User } = require('./db/models/user');
+    // const { Order } = require('./db/models/order');
 
     const app = express();
     const fileStorageEngine = multer.diskStorage({
@@ -95,7 +96,6 @@ const { createHash } = require('crypto');
 
         const thumbnailB64 = fs.readFileSync(thumbnail.path, 'base64');
         const skinB64 = fs.readFileSync(skin.path, 'base64');
-
         // file deletion
         fs.unlinkSync(thumbnail.path);
         fs.unlinkSync(skin.path);
@@ -111,21 +111,17 @@ const { createHash } = require('crypto');
 
         const newSkin = new Skin({
             name: req.body.name,
-            thumbnail: thumbnailB64, // base64 generated from the uploaded file
+            thumbnail: thumbnailB64,
+            skin: skinB64,
             description: req.body.description,
             priceUsd: req.body.price,
             status: req.body.status == 'on'
         });
-
-        // TODO:
-        // the skin itself should land in a separate collection
-        // under the same name as the Skin object
-
         await newSkin.save();
         res.redirect('/');
     });
 
-    app.post('/edit/:name', upload.fields([  // chcialem zeby tutaj byl PUT, ale w html form nie ma :(
+    app.post('/edit/:name', upload.fields([  // ideally PUT, however HTML forms don't support it
         { name: 'thumbnail', maxCount: 1 },
         { name: 'skin', maxCount: 1 }
     ]), async (req, res) => {
@@ -147,57 +143,38 @@ const { createHash } = require('crypto');
 
         let item = await Skin.findOne({ name: req.params.name }).lean().exec();
         if (item === null) {
-            res.render('item-edit', {
-                item,
-                message: 'Error',
-                user: req.session.userid,
-                admin: req.session.admin
-            });
+            res.render('item-edit', { item, message: 'Error', user: req.session.userid, admin: req.session.admin });
             return;
         }
 
         const checkName = await Skin.findOne({ name: req.body.name }).lean().exec();
         if (req.body.name !== req.params.name && checkName !== null) {
-            res.render('item-edit', {
-                item,
-                message: 'Name is occupied',
-                user: req.session.userid,
-                admin: req.session.admin
-            });
+            res.render('item-edit', { item, message: 'Name is occupied', user: req.session.userid, admin: req.session.admin });
             return;
         }
 
         thumbnail = thumbnail || item.thumbnail;
         skin = skin || item.thumbnail;
         if (!thumbnail || !skin) {  // necessary?
-            res.render('item-edit', {
-                item,
-                message: 'Missing skin and thumbnail',
-                user: req.session.userid,
-                admin: req.session.admin
-            });
+            res.render('item-edit', { item, message: 'Missing skin and thumbnail', user: req.session.userid, admin: req.session.admin });
             return;
         }
 
         item = await Skin.findOneAndUpdate({ name: req.params.name }, {
             name: req.body.name,
-            thumbnail: thumbnail, // base64 generated from the uploaded file
+            thumbnail,
+            skin,
             description: req.body.description,
             priceUsd: req.body.price,
             status: req.body.status == 'on'
         }, { new: true }).lean().exec();
 
-        res.render('item-edit', {
-            item,
-            message: 'Success',
-            user: req.session.userid,
-            admin: req.session.admin
-        });
+        res.render('item-edit', { item, message: 'Success', user: req.session.userid, admin: req.session.admin });
     });
 
     app.get('/login', auth, (req, res) => {
         if (req.session.userid) {
-            res.redirect('/?message=' + 'Jesteś już zalogowany');
+            res.redirect('/?message=' + 'Already logged in.');
         } else {
             res.render('login');
         }
@@ -205,7 +182,7 @@ const { createHash } = require('crypto');
 
     app.post('/login', auth, async (req, res) => {
         if (req.session.userid) {
-            res.redirect('/?message=' + 'Jesteś już zalogowany');
+            res.redirect('/?message=' + 'Already logged in.');
         }
 
         const username = req.body.username;
@@ -216,7 +193,7 @@ const { createHash } = require('crypto');
             let session = req.session;
             session.userid = username;
             session.admin = account.admin;
-            res.redirect('/?message=' + 'Zalogowano');
+            res.redirect('/?message=' + 'Logged in successfully.');
         } else {
             res.render('login', { message: 'Invalid login or password.' });
         }
@@ -224,7 +201,7 @@ const { createHash } = require('crypto');
 
     app.get('/register', auth, (req, res) => {
         if (req.session.userid) {
-            res.redirect('/?message=' + 'Jesteś już zalogowany');
+            res.redirect('/?message=' + 'Already logged in.');
         } else {
             res.render('register');
         }
@@ -234,7 +211,7 @@ const { createHash } = require('crypto');
         console.log(req.body);
 
         if (req.session.userid) {
-            res.redirect('/?message=' + 'Jesteś już zalogowany');
+            res.redirect('/?message=' + 'Already logged in.');
         } else {
             if (req.body.password !== req.body.cpassword) {
                 res.render('register', { message: 'Passwords are not matching.' });
@@ -255,12 +232,12 @@ const { createHash } = require('crypto');
                 username: req.body.username,
                 email: req.body.email,
                 password: createHash('sha256').update(req.body.password).digest('hex'),
-                creationTime: new Date(),
+                // creationTime: new Date(),  // default value allows that to be omitted
                 admin: false
             });
 
             await newUser.save();
-            res.redirect('/?message=' + 'Konto zostało utworzone');
+            res.redirect('/?message=' + 'Registration complete.');
         }
     });
 

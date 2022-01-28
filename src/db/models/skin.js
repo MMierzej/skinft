@@ -15,6 +15,10 @@ const skinSchema = new mongoose.Schema({
         type: String,
         required: true
     },
+    skin: {
+        type: String,
+        required: true
+    },
     description: {
         type: String,
         required: true
@@ -32,4 +36,5 @@ const skinSchema = new mongoose.Schema({
 
 const Skin = mongoose.model('Skin', skinSchema);
 
-module.exports = Skin
+module.exports.Skin = Skin
+module.exports.skinSchema = skinSchema

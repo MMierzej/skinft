@@ -26,6 +26,7 @@ const userSchema = new mongoose.Schema({
     },
     creationTime: {
         type: Date,
+        default: Date.now,
         required: true
     },
     admin: {
@@ -36,4 +37,5 @@ const userSchema = new mongoose.Schema({
 
 const User = mongoose.model('User', userSchema);
 
-module.exports = User
+module.exports.User = User
+module.exports.userSchema = userSchema
