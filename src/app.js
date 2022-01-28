@@ -9,6 +9,7 @@ const sessions = require('express-session');
 const MongoStore = require('connect-mongo');
 const cookieParser = require('cookie-parser');
 const { createHash } = require('crypto');
+const { restart } = require('nodemon');
 
 
 (async () => {
@@ -87,6 +88,10 @@ const { createHash } = require('crypto');
         { name: 'thumbnail', maxCount: 1 },
         { name: 'skin', maxCount: 1 }
     ]), async (req, res) => {
+        if (!req.session.admin) {
+            res.redirect('/');
+            return;
+        }
         const thumbnail = req.files.thumbnail[0];
         const skin = req.files.skin[0];
 
@@ -122,6 +127,10 @@ const { createHash } = require('crypto');
         { name: 'thumbnail', maxCount: 1 },
         { name: 'skin', maxCount: 1 }
     ]), async (req, res) => {
+        if (!req.session.admin) {
+            res.redirect('/');
+            return;
+        }
         let thumbnail;
         let skin;
         if (req.files.thumbnail) {

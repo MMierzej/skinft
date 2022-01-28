@@ -2,7 +2,7 @@
     <a href="/" class='headButton'>SKINFT</a>
     <% if (!locals.user) { %> <a href='/register' class='headButton'>Register</a> <a href='/login' class='headButton'>Login</a> <% } %>
     <% if (locals.user) { %> <a href='/logout' class='headButton'>Logout</a> <% } %>
-    <% if (locals.admin) { %> <a href='/new-item' class='headButton'>Add item</a> <% } %>
+    <% if (locals.admin) { %> <a href='/new-item' class='headButton'>Add item</a> <a href='/admin' class='headButton'>Admin page</a> <% } %>
 
     <% if (locals.user) { %> <%= "Welcome " + user %> <% } %>
 </div></header>
