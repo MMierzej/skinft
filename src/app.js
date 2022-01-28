@@ -9,7 +9,6 @@ const sessions = require('express-session');
 const MongoStore = require('connect-mongo');
 const cookieParser = require('cookie-parser');
 const { createHash } = require('crypto');
-const { restart } = require('nodemon');
 
 
 (async () => {
@@ -66,9 +65,9 @@ const { restart } = require('nodemon');
     app.get('/item/:name', async (req, res) => {
         const item = await Skin.findOne({ name: req.params.name }).lean().exec();
         if (item === null) {
-            res.redirect('/'); // nie ma takiego itemu
+            res.redirect('/');
         } else if (req.session.admin) {
-            res.render('item-edit', { item, user: req.session.userid, admin: req.session.admin }); 
+            res.render('item-edit', { item, user: req.session.userid, admin: req.session.admin });
         } else {
             res.render('item', { item, user: req.session.userid, admin: req.session.admin });
         }
@@ -80,10 +79,8 @@ const { restart } = require('nodemon');
         } else {
             res.redirect('/');
         }
-        
     });
 
-    /* TODO: admin-only endpoint */
     app.post('/new-item', upload.fields([
         { name: 'thumbnail', maxCount: 1 },
         { name: 'skin', maxCount: 1 }
@@ -92,6 +89,7 @@ const { restart } = require('nodemon');
             res.redirect('/');
             return;
         }
+
         const thumbnail = req.files.thumbnail[0];
         const skin = req.files.skin[0];
 
@@ -103,7 +101,11 @@ const { restart } = require('nodemon');
         fs.unlinkSync(skin.path);
 
         if (null !== await Skin.findOne({ name: req.body.name }).exec()) {
-            res.render('new-item', { message: 'Skin with such name already exists.', user: req.session.userid, admin: req.session.admin });
+            res.render('new-item', {
+                message: 'Skin with such name already exists.',
+                user: req.session.userid,
+                admin: req.session.admin
+            });
             return;
         }
 
@@ -131,6 +133,7 @@ const { restart } = require('nodemon');
             res.redirect('/');
             return;
         }
+
         let thumbnail;
         let skin;
         if (req.files.thumbnail) {
@@ -141,33 +144,55 @@ const { restart } = require('nodemon');
             skin = fs.readFileSync(req.files.skin[0].path, 'base64');
             fs.unlinkSync(req.files.skin[0].path);
         }
+
         let item = await Skin.findOne({ name: req.params.name }).lean().exec();
         if (item === null) {
-            res.render('item-edit', { item, message: 'Error', user: req.session.userid, admin: req.session.admin });
-            return;
-        }
-        const checkName = await Skin.findOne({ name: req.body.name }).lean().exec();
-        if (req.body.name !== req.params.name && checkName !== null) {
-            res.render('item-edit', { item, message: 'Name is occupied', user: req.session.userid, admin: req.session.admin });
-            return;
-        }
-        thumbnail = thumbnail || item.thumbnail;
-        skin = skin || item.thumbnail;
-        if (!thumbnail || !skin) {
-            res.render('item-edit', { item, message: 'Missing skin and thumbnail', user: req.session.userid, admin: req.session.admin });
+            res.render('item-edit', {
+                item,
+                message: 'Error',
+                user: req.session.userid,
+                admin: req.session.admin
+            });
             return;
         }
 
-        await Skin.findOneAndReplace({ name: req.params.name }, {
+        const checkName = await Skin.findOne({ name: req.body.name }).lean().exec();
+        if (req.body.name !== req.params.name && checkName !== null) {
+            res.render('item-edit', {
+                item,
+                message: 'Name is occupied',
+                user: req.session.userid,
+                admin: req.session.admin
+            });
+            return;
+        }
+
+        thumbnail = thumbnail || item.thumbnail;
+        skin = skin || item.thumbnail;
+        if (!thumbnail || !skin) {  // necessary?
+            res.render('item-edit', {
+                item,
+                message: 'Missing skin and thumbnail',
+                user: req.session.userid,
+                admin: req.session.admin
+            });
+            return;
+        }
+
+        item = await Skin.findOneAndUpdate({ name: req.params.name }, {
             name: req.body.name,
             thumbnail: thumbnail, // base64 generated from the uploaded file
             description: req.body.description,
             priceUsd: req.body.price,
             status: req.body.status == 'on'
-        }).lean().exec();
-        item = await Skin.findOne({ name: req.body.name }).lean().exec();
+        }, { new: true }).lean().exec();
 
-        res.render('item-edit', { item, message: 'Success', user: req.session.userid, admin: req.session.admin });
+        res.render('item-edit', {
+            item,
+            message: 'Success',
+            user: req.session.userid,
+            admin: req.session.admin
+        });
     });
 
     app.get('/login', auth, (req, res) => {
@@ -182,7 +207,7 @@ const { restart } = require('nodemon');
         if (req.session.userid) {
             res.redirect('/?message=' + 'Jesteś już zalogowany');
         }
-        
+
         const username = req.body.username;
         const password = createHash('sha256').update(req.body.password).digest('hex');
         const account = await User.findOne({ username }).lean().exec();
