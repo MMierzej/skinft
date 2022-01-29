@@ -32,6 +32,20 @@
     <%- include('footer', {
         user: locals.user
     }) %>
-</body>
+    <script>
+        const name = "<%- item.name %>";
+        $('.cartButton').click(() => {
+            $.ajax({
+                type: "POST",
+                url: "/add-item/" + name,
+                data: null,
+                success: function(html) { 
+                    alert(html);
+                    update();
+                }
+            });
+        });
 
+    </script>
+</body>
 </html>

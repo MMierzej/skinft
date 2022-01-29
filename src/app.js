@@ -203,6 +203,7 @@ const { createHash } = require('crypto');
             let session = req.session;
             session.userid = username;
             session.admin = account.admin;
+            session.cart = [];
             res.redirect('/?message=' + 'Logged in successfully.');
         } else {
             res.render('login', { message: 'Invalid login or password.' });
@@ -271,8 +272,49 @@ const { createHash } = require('crypto');
             res.json('done');
         }
         else {
-            res.redirect('/');
+            res.json('fail');
         }
+    });
+
+    app.post('/add-item/:name', (req, res) => {
+        if (req.session.userid) {
+            if (!req.session.cart.includes(req.params.name)) {
+                req.session.cart.push(req.params.name);
+                res.json('done');
+                return;
+            }
+        }
+        res.json('fail');
+    });
+
+    app.post('/remove-item/:name', (req, res) => {
+        if (req.session.userid) {
+            const id = req.session.cart.indexOf(req.params.name);
+            if (id > -1) {
+                req.session.cart.splice(id, 1);
+                res.json('done');
+                return;
+            }
+        }
+        res.json('fail');
+    });
+
+    app.get('/cart', async (req, res) => {
+        if (req.session.userid) {
+            const response = [];
+            for(const name of req.session.cart) {
+                const skin = await Skin.findOne({ name }).lean().exec();
+                response.push( {
+                    name: skin.name,
+                    priceUsd: skin.priceUsd,
+                    thumbnail: skin.thumbnail,
+                    status: skin.status
+                });
+            }
+            res.json(response);
+            return;
+        }
+        res.json('fail');
     });
 
     function auth(req, res, next) { // tu bedziemy sprawdzac middlewareowo czy ktos jest zalogowany i czy jest adminem
