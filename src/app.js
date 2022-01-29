@@ -154,8 +154,8 @@ const { createHash } = require('crypto');
         }
 
         thumbnail = thumbnail || item.thumbnail;
-        skin = skin || item.thumbnail;
-        if (!thumbnail || !skin) {  // necessary?
+        skin = skin || item.skin;
+        if (!thumbnail || !skin) {  // necessary? yes
             res.render('item-edit', { item, message: 'Missing skin and thumbnail', user: req.session.userid, admin: req.session.admin });
             return;
         }
