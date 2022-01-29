@@ -16,8 +16,8 @@
         user: locals.user
     }) %>
     <main>
-        <form action="/edit/<%- item.name %>" method="post" enctype="multipart/form-data">
-            <table>
+        <table>
+            <form action="/edit/<%- item.name %>" method="post" enctype="multipart/form-data">          
                 <tr>
                     <th colspan="2">Edit skin</th>
                 </tr>
@@ -55,11 +55,19 @@
                     <td></td>
                     <td><input type="submit" id="submit" value="Update"></td>
                 </tr>
+            </form>
+            <form action="/delete/<%- item.name %>" method="post">
+                <tr>
+                    <td></td>
+                    <td>
+                        <input type="submit" id="submit" value="Delete">
+                    </td>
+                </tr>
                 <tr>
                     <td colspan="2"><p id="error"><% if (locals.message) { %> <%= message %> <% } %></p></td>
                 </tr>
-            </table>
-        </form>
+            </form>
+        </table>
     </main>
     <%- include('footer', {
         user: locals.user

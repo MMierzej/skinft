@@ -172,6 +172,16 @@ const { createHash } = require('crypto');
         res.render('item-edit', { item, message: 'Success', user: req.session.userid, admin: req.session.admin });
     });
 
+    app.post('/delete/:name', async (req, res) => {
+        if (!req.session.admin) {
+            res.redirect('/');
+        } else {
+            const name = req.params.name;
+            await Skin.findOneAndRemove({ name: name });
+            res.redirect('/');
+        }
+    });
+
     app.get('/login', auth, (req, res) => {
         if (req.session.userid) {
             res.redirect('/?message=' + 'Already logged in.');
