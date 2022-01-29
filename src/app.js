@@ -266,6 +266,15 @@ const { createHash } = require('crypto');
         }
     });
 
+    app.post('/place-order', async (req, res) => {
+        if (req.session.userid) {
+            res.json('done');
+        }
+        else {
+            res.redirect('/');
+        }
+    });
+
     function auth(req, res, next) { // tu bedziemy sprawdzac middlewareowo czy ktos jest zalogowany i czy jest adminem
         if (req.session.userid) {
             req.logged = true;

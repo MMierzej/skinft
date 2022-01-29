@@ -5,4 +5,47 @@
     <% if (locals.admin) { %> <a href='/new-item' class='headButton'>Add item</a> <a href='/admin' class='headButton'>Admin page</a> <% } %>
 
     <% if (locals.user) { %> <%= "Welcome " + user %> <% } %>
+    <% if (locals.user && !locals.admin) { %> <button id="buttonOpen">Cart</button> <% } %>
 </div></header>
+
+
+<div id="cart">
+    <div id="cartTop">
+        <h1 id="h1cart">Cart</h1>
+        <table>
+            <tr>
+                <th>Name</th>
+                <th>Price</th>
+                <th></th>
+            </tr>
+            <!-- ajax mysle najlepiej -->
+        </table>
+    </div>
+    <div id="cartBot">
+        <button id="buttonClose">Close</button>
+        <button id="buttonOrder">Order</button>
+    </div>
+</div>
+<script>
+    const close = $('#buttonClose');
+    const open = $('#buttonOpen');
+    const order = $('#buttonOrder');
+    const cart = $('#cart');
+    cart.hide();
+    close.click(function () {
+        cart.hide('fast');
+    });
+    open.click(function () {
+        cart.show('fast');
+    });
+    order.click(function () {
+        $.ajax({
+        type: "POST",
+        url: "/place-order",
+        data: null,
+        success: function(html){ 
+                alert(html);
+        }
+});
+    });
+</script>
