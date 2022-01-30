@@ -1,0 +1,28 @@
+#bigContainer
+{
+    display: flex;
+    float: left;
+    width: 100%;
+    /* align-items: stretch; */
+    height:90vh;
+}
+
+#left
+{
+    flex: 1;
+    background-color: #7e82c4;
+    
+    /* float: left; */
+}
+
+#right
+{
+    flex: 1;
+    background-color: #81b7d2;
+    /* float: left; */
+}
+
+table, tr, td
+{
+    padding: 15px;
+}

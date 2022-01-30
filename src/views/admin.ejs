@@ -18,12 +18,96 @@
     <%- include('header', {
         user: locals.user
     }) %>
-    <main>
-        
-    </main>
+    <div id="bigContainer">
+        <div id="left">
+            <h1>Users</h1>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Username</th>
+                        <th>Name</th>
+                        <th>Date of registration</th>
+                    </tr>
+                </thead>
+                <tbody id="tbody2">
+
+                </tbody>
+            </table>
+            <button id="refreshUsers">Refresh</button>
+        </div>
+        <div id="right">
+            <h1>Orders</h1>
+            <table>
+                <thead>
+                    <tr>
+                        <th>User</th>
+                        <th>Email</th>
+                        <th>Price</th>
+                        <th>Long list of skins</th>
+                    </tr>
+                </thead>
+                <tbody id="tbody3">
+
+                </tbody>
+            </table>
+            <button id="refreshOrders">Refresh</button>
+        </div>
+    </div>
     <%- include('footer', {
         user: locals.user
     }) %>
 </body>
+<script>
+    const tbody2 = $('#tbody2');
+    const tbody3 = $('#tbody3');
+    const refreshUsers = $('#refreshUsers');
+    const refreshOrders = $('#refreshOrders');
 
+    function updateUsers() {
+        $.get( '/get-users', function( data ) {
+            tbody2.html('');
+            for(const item of data) {
+                tbody2.append($('<tr>')
+                        .append($('<td>', {
+                            text: item.username
+                        }))
+                        .append($('<td>', {
+                            text: item.name
+                        }))
+                        .append($('<td>', {
+                            text: item.date
+                        })));
+            }
+        });
+    }
+
+    function updateOrders() {
+        $.get( '/get-orders', function( data ) {
+            tbody3.html('');
+            console.log(data);
+            for(const order of data) {
+                let skinList = '';
+                order.skins.forEach(x => skinList += x?.name + ', ');
+
+                tbody3.append($('<tr>')
+                        .append($('<td>', {
+                            text: order.username
+                        }))
+                        .append($('<td>', {
+                            text: order.email
+                        }))
+                        .append($('<td>', {
+                            text: '$' + order.totalPrice
+                        }))
+                        .append($('<td>', {
+                            text: skinList
+                        })));
+            }
+        });
+    }
+    updateUsers();
+    updateOrders();
+    refreshUsers.click(updateUsers);
+    refreshOrders.click(updateOrders);
+</script>
 </html>

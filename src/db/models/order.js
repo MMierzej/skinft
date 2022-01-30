@@ -1,19 +1,21 @@
 const mongoose = require('mongoose');
-const { userSchema } = require('./user');
-const { skinSchema } = require('./skin');
+const { Schema } = mongoose;
 
 const orderSchema = mongoose.Schema({
     // unique id provided by the db
-    user: userSchema,
-    skins: [skinSchema],
+    user: {
+        type: Schema.Types.ObjectId,
+        ref: 'User',
+        required: true
+    },
+    skins: [{ type: Schema.Types.ObjectId, ref: 'Skin' }],
     totalPrice: {
         type: Number,
-        required: true
+        required: true,
+        default: 0
     }
-    // possibly more fields...
 });
 
 const Order = mongoose.model('Order', orderSchema);
 
 module.exports.Order = Order
-module.exports.orderSchema = orderSchema

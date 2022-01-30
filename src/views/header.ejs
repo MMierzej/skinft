@@ -29,25 +29,32 @@
     </div>
     <div id="cartBot">
         <a id='total'></a>
-        <button id="buttonClose">Close</button>
-        <button id="buttonOrder">Order</button>
+        <button class="botButton" id="buttonClose">Close</button>
+        <button class="botButton" id="buttonOrder">Order</button>
+        <button class="botButton" id="buttonRefresh">Refresh</button>
     </div>
 </div>
 <script>
     const close = $('#buttonClose');
     const open = $('#buttonOpen');
     const order = $('#buttonOrder');
+    const refresh = $('#buttonRefresh');
     const cart = $('#cart');
     const tbody = $('#tbody');
     const total = $('#total');
+    let haveAll = false;
 
     function update() {
         $.get( '/cart', function( data ) {
+            order.prop( "disabled", true );
             tbody.html('');
             let sum = 0;
+            haveAll = true;
             for(const item of data) {
                 if (item.status) {
                     sum += item.priceUsd;
+                } else {
+                    haveAll = false;
                 }
                 tbody.append($('<tr>')
                         .append($('<td>', {
@@ -72,6 +79,11 @@
                         .click( () => remove(item.name) )
                         )));
             }
+            if (!haveAll || !data.length) {
+                order.prop( "disabled", true );
+            } else {
+                order.prop( "disabled", false );
+            }
             total.html('Total: ' + sum + '$');
         });
     }
@@ -94,7 +106,10 @@
     open.click(function () {
         cart.show('fast');
     });
-    order.click(function () {
+    refresh.click(function () {
+        update();
+    });
+    order.click(function () { 
         $.ajax({
         type: "POST",
         url: "/place-order",

@@ -15,16 +15,20 @@ const { createHash } = require('crypto');
     const dbConn = await require('./db/mongoose')();  // function call!
     const { Skin } = require('./db/models/skin');
     const { User } = require('./db/models/user');
-    // const { Order } = require('./db/models/order');
+    const { Order } = require('./db/models/order');
 
     const app = express();
     const fileStorageEngine = multer.diskStorage({
         destination: (req, file, cb) => {
             cb(null, "./images");
         },
-        filename: (req, file, cb) => {
-            cb(null, Date.now() + "--" + file.originalname);
-        }
+        filename: (() => {
+            let cnt = 0;
+            return (req, file, cb) => {
+                cb(null, Date.now() + "--" + file.originalname + cnt++);
+                cnt %= 64;
+            }
+        })(),
     });
     const upload = multer({ storage: fileStorageEngine });
 
@@ -43,7 +47,7 @@ const { createHash } = require('crypto');
     }));
 
 
-    app.get('/', auth, upload.single(), (req, res) => {
+    app.get('/', upload.single(), (req, res) => {
         if (req.session.userid) {
             res.render('index', { user: req.session.userid, admin: req.session.admin });
         } else {
@@ -141,7 +145,7 @@ const { createHash } = require('crypto');
             fs.unlinkSync(req.files.skin[0].path);
         }
 
-        let item = await Skin.findOne({ name: req.params.name }).lean().exec();
+        let item = await Skin.findOne({ name: req.params.name }).lean().exec();  // currently in the db
         if (item === null) {
             res.render('item-edit', { item, message: 'Error', user: req.session.userid, admin: req.session.admin });
             return;
@@ -155,11 +159,6 @@ const { createHash } = require('crypto');
 
         thumbnail = thumbnail || item.thumbnail;
         skin = skin || item.skin;
-        if (!thumbnail || !skin) {  // necessary? yes
-            res.render('item-edit', { item, message: 'Missing skin and thumbnail', user: req.session.userid, admin: req.session.admin });
-            return;
-        }
-
         item = await Skin.findOneAndUpdate({ name: req.params.name }, {
             name: req.body.name,
             thumbnail,
@@ -182,7 +181,7 @@ const { createHash } = require('crypto');
         }
     });
 
-    app.get('/login', auth, (req, res) => {
+    app.get('/login', (req, res) => {
         if (req.session.userid) {
             res.redirect('/?message=' + 'Already logged in.');
         } else {
@@ -190,7 +189,7 @@ const { createHash } = require('crypto');
         }
     });
 
-    app.post('/login', auth, async (req, res) => {
+    app.post('/login', async (req, res) => {
         if (req.session.userid) {
             res.redirect('/?message=' + 'Already logged in.');
         }
@@ -210,7 +209,7 @@ const { createHash } = require('crypto');
         }
     });
 
-    app.get('/register', auth, (req, res) => {
+    app.get('/register', (req, res) => {
         if (req.session.userid) {
             res.redirect('/?message=' + 'Already logged in.');
         } else {
@@ -218,9 +217,7 @@ const { createHash } = require('crypto');
         }
     });
 
-    app.post('/register', upload.single(), auth, async (req, res) => {
-        console.log(req.body);
-
+    app.post('/register', upload.single(), async (req, res) => {
         if (req.session.userid) {
             res.redirect('/?message=' + 'Already logged in.');
         } else {
@@ -252,7 +249,7 @@ const { createHash } = require('crypto');
         }
     });
 
-    app.get('/logout', auth, (req, res) => {  // chyba tymczasowo get 
+    app.get('/logout', (req, res) => {  // chyba tymczasowo get 
         if (req.session.userid) {
             req.session.destroy();
         }
@@ -269,10 +266,21 @@ const { createHash } = require('crypto');
 
     app.post('/place-order', async (req, res) => {
         if (req.session.userid) {
-            res.json('done');
-        }
-        else {
-            res.json('fail');
+            const user = await User.findOne({ username: req.session.userid }).exec();
+            const newOrder = new Order({ user: user._id });  // totalPrice defaults to 0
+            for (const name of req.session.cart) {
+                const skin = await Skin.findOne({ name }).exec();
+                if (skin.status) {
+                    newOrder.skins.push(skin._id);
+                    newOrder.totalPrice += skin.priceUsd;
+                    skin.status = false;
+                    skin.save();
+                }
+            }
+            await newOrder.save();
+            res.json('order placed, you monkey');
+        } else {
+            res.json('failed');
         }
     });
 
@@ -302,9 +310,10 @@ const { createHash } = require('crypto');
     app.get('/cart', async (req, res) => {
         if (req.session.userid) {
             const response = [];
-            for(const name of req.session.cart) {
+            for (const name of req.session.cart) {
                 const skin = await Skin.findOne({ name }).lean().exec();
-                response.push( {
+                if (skin === null) continue;
+                response.push({
                     name: skin.name,
                     priceUsd: skin.priceUsd,
                     thumbnail: skin.thumbnail,
@@ -317,14 +326,45 @@ const { createHash } = require('crypto');
         res.json('fail');
     });
 
-    function auth(req, res, next) { // tu bedziemy sprawdzac middlewareowo czy ktos jest zalogowany i czy jest adminem
-        if (req.session.userid) {
-            req.logged = true;
+    app.get('/get-users', async (req, res) => {
+        if (req.session.admin) {
+            const users = await User.find({}).lean().exec();
+            const result = [];
+            for (const user of users) {
+                result.push({
+                    username: user.username,
+                    name: user.name,
+                    date: user.creationTime
+                });
+            }
+            res.json(result);
         } else {
-            req.logged = false;
+            res.json('fail');
         }
-        next();
-    }
+    });
+
+    app.get('/get-orders', async (req, res) => {
+        if (req.session.admin) {
+            const orders = await Order.find().lean().exec();
+            const result = [];
+            for (const order of orders) {
+                const user = await User.findById(order.user).lean().exec();
+                const skins = [];
+                for (const skinId of order.skins) {
+                    skins.push(await Skin.findById(skinId).lean().exec());
+                }
+                result.push({
+                    username: user.username,
+                    email: user.email,
+                    totalPrice: order.totalPrice,
+                    skins
+                });
+            }
+            res.json(result);
+        } else {
+            res.json('fail');
+        }
+    });
 
     http.createServer(app).listen(3000, () => {
         console.log('Server is running on port 3000.');
