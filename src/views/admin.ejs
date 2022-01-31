@@ -86,8 +86,7 @@
             tbody3.html('');
             console.log(data);
             for(const order of data) {
-                let skinList = '';
-                order.skins.forEach(x => skinList += x?.name + ', ');
+                const skinList = order.skins.map(s => s?.name).join(', ');
 
                 tbody3.append($('<tr>')
                         .append($('<td>', {

@@ -45,12 +45,15 @@
     let haveAll = false;
 
     function update() {
-        $.get( '/cart', function( data ) {
+        $.get( '/cart', function(data) {
+            if (data === 'fail') {
+                return;
+            }
             order.prop( "disabled", true );
             tbody.html('');
             let sum = 0;
             haveAll = true;
-            for(const item of data) {
+            for (const item of data) {
                 if (item.status) {
                     sum += item.priceUsd;
                 } else {

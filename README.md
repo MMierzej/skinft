@@ -7,9 +7,8 @@
 - [x] sessions container `connect-mongo`
 - [x] user & admin accounts
 - [x] login & authentication
-- [ ] filters for fetching items
-- [ ] delete & modify user accounts
-- [ ] admin endpoints
+- [x] filters for fetching items
+- [x] admin endpoints
 
 #### Front-end:
 - [x] item page with extended description
@@ -17,9 +16,9 @@
 - [x] products presentation
 - [x] filling header and footer
 - [x] stretchy css
-- [ ] shopping cart
-- [ ] side pannel with filters
-- [ ] admin endpoints
+- [x] shopping cart
+- [x] side pannel with filters
+- [x] admin endpoints
 
 #### Database:
 - [x] database design & data model
@@ -27,5 +26,4 @@
 - [x] contain all info about items in the DB
 - [x] sessions collection (`connect-mongo`)
 - [x] users collection
-- [ ] separate collection for proper skins
-- [ ] delete & modify documents
+- [x] delete & modify documents
