@@ -32,7 +32,7 @@
             });
             result = await result.text();
             let o = JSON.parse(result);
-            if (!o.length) {  // assuming that `o` is an array
+            if (i !== 0 && !o.length) {  // assuming that `o` is an array
                 i--;
                 return;
             }

@@ -35,7 +35,7 @@ a
     text-decoration: none;
 }
 
-.headButton {margin: 5px 10px;}
+.headButton {margin: 20px 10px;}
 
 #cart
 {
@@ -57,6 +57,7 @@ a
 {
     float: right;
     padding: 10px;
+    margin: 10px 10px;
 }
 
 #cartTop
@@ -90,4 +91,9 @@ a
     display: block;
     height: 50px;
     width: auto;
+    margin: 11px 0px;
+}
+
+.distance {
+    padding: 15px;
 }

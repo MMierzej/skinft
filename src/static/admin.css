@@ -16,6 +16,7 @@ html, body {
 {
     flex: 1;
     background-color: #7e82c4;
+    padding: 15px;
     
     /* float: left; */
 }
@@ -24,10 +25,12 @@ html, body {
 {
     flex: 1;
     background-color: #81b7d2;
+    padding: 15px;
+
     /* float: left; */
 }
 
-table, tr, td
+table, tr, td, th
 {
     padding: 15px;
 }
