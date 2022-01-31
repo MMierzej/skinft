@@ -1,14 +1,17 @@
-main
+html, body {
+    height: 100%;
+    margin: 0;
+}
+
+#bigContainer
 {
     width: 100%;
+    height: 80%;
     background-color: #81b7d2;
-    min-height: 300px;
-    height: 100vh;
     float: left;
     display: flex;
     justify-content: center;
     align-items: center;
-    
 }
 
 table, tr, td

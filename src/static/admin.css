@@ -1,10 +1,15 @@
+html, body {
+    height: 100%;
+    margin: 0;
+}
+
 #bigContainer
 {
     display: flex;
     float: left;
     width: 100%;
     /* align-items: stretch; */
-    height:90vh;
+    height: 80%;
 }
 
 #left

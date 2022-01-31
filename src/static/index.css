@@ -1,3 +1,8 @@
+html, body {
+  height: 100%;
+  margin: 0;
+}
+
 aside
 {
     min-width: 300px;
@@ -5,6 +10,8 @@ aside
     background-color: #4d5198;
     /* float: left; */
 }
+
+aside * {margin: 10px;}
 
 main
 {
@@ -29,8 +36,11 @@ main
     display: flex;
     float: left;
     width: 100%;
+    height: 80%;
     align-items: stretch;
 }
+
+.big-container * {height: auto;}
 
 .item
 {

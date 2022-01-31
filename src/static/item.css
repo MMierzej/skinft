@@ -1,4 +1,9 @@
-main
+html, body {
+    height: 100%;
+    margin: 0;
+}
+
+#bigContainer
 {
     width: 100%;
     background-color: #81b7d2;

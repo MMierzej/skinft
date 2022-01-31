@@ -1,12 +1,12 @@
-<header><div class='distance'>
+<header>
     <a id="logo" href="/"><img src='/images/logo.png' alt="SKINFT"></a>
     <% if (!locals.user) { %> <a href='/register' class='headButton'>Register</a> <a href='/login' class='headButton'>Login</a> <% } %>
     <% if (locals.user) { %> <a href='/logout' class='headButton'>Logout</a> <% } %>
     <% if (locals.admin) { %> <a href='/new-item' class='headButton'>Add item</a> <a href='/admin' class='headButton'>Admin page</a> <% } %>
 
-    <% if (locals.user) { %> <%= "Welcome " + user %> <% } %>
+    <% if (locals.user) { %> <span class='headButton'><%= "Welcome " + user %> <% } %></span>
     <% if (locals.user && !locals.admin) { %> <button id="buttonOpen">Cart</button> <% } %>
-</div></header>
+</header>
 
 
 <div id="cart">
