@@ -18,7 +18,7 @@
     <%- include('header', {
         user: locals.user
     }) %>
-    <main>
+    <div id="bigContainer">
         <form action="/new-item" method="post" enctype="multipart/form-data">
             <table>
                 <tr>
@@ -57,7 +57,7 @@
                 </tr>
             </table>
         </form>
-    </main>
+    </div>
     <%- include('footer', {
         user: locals.user
     }) %>

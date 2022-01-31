@@ -1,8 +1,13 @@
-main
+html, body {
+    height: 100%;
+    margin: 0;
+}
+
+#bigContainer
 {
     width: 100%;
     background-color: #81b7d2;
-    min-height: 500px;
+    min-height: 80%;
     float: left;
     text-align: center;
     padding-top: 30px;

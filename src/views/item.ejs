@@ -15,7 +15,7 @@
     <%- include('header', {
         user: locals.user
     }) %>
-    <main>
+    <div id="bigContainer">
         <p class='name'>
             <%- item.name %>
         </p>
@@ -28,7 +28,7 @@
         <p class='description'>
             <%- item.description %>
         </p>
-    </main>
+    </div>
     <%- include('footer', {
         user: locals.user
     }) %>
