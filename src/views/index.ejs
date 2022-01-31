@@ -10,63 +10,89 @@
     <link rel='stylesheet' type='text/css' href='/index.css'>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script>
-        $(function () {
-                let nextbt = $('#next-page')[0];
-                nextbt.addEventListener('click', async function () {
-                    let container = $('.container');
-                    //parametry do posta
-                    let itemsOnPage = 9; // do pobrania
-                    let pageNum = 1; // do pobrania jakos
-                    let form = new FormData();
-                    form.append('page', pageNum);
-                    form.append('itemsOnPage', itemsOnPage);
+        var i = 0;
 
+        async function getItems(change) {
+            i += change;
+            if (i < 0) {
+                i = 0;
+                return;
+            }
 
-                    let result = await fetch('/items', {
-                        method: 'POST',
-                        body: form
-                    });
-                    result = await result.text();
-                    console.log(result);
-                    let o = JSON.parse(result);
-                    container.html('');
+            let container = $('.container');
+            let form = new FormData();
+            form.append('page', i);
+            form.append('itemsOnPage', 3);
+            form.append('name', $('#searchphrase').val());
+            form.append('available', $('#available').is(':checked'));
 
-                    for (let item of o) {
-                        container.append($('<a>', {
-                            class: 'item',
-                            href: '/item/' + item.name,
-                            title: 'item in shop: ' + item.name
-                        }).append($('<p>', {
-                            text: item.name
-                        })).append($('<img>', {
-                            class: 'page-item',
-                            src: 'data:image/png;base64,' + item.thumbnail
-                        })).append($('<p>', {
-                            class: 'price-tag',
-                            text: 'USD: ' + item.priceUsd + '$'
-                        })))
-                    }
-
-                });
-                nextbt.click();
+            let result = await fetch('/items', {
+                method: 'POST',
+                body: form
             });
+            result = await result.text();
+            let o = JSON.parse(result);
+            if (!o.length) {  // assuming that `o` is an array
+                i--;
+                return;
+            }
+
+            $('.pgcnt').each(function() {this.textContent = i + 1});
+            container.html('');
+            for (let item of o) {
+                container.append($('<a>', {
+                    class: 'item',
+                    href: '/item/' + item.name,
+                    title: 'item in shop: ' + item.name
+                }).append($('<p>', {
+                    text: item.name
+                })).append($('<img>', {
+                    class: 'page-item',
+                    src: 'data:image/png;base64,' + item.thumbnail
+                })).append($('<p>', {
+                    class: 'price-tag',
+                    text: 'USD: ' + item.priceUsd + '$'
+                })));
+            }
+        }
+
+        function invokeMeOnLoad() {
+            $('.next').each(function() {
+                this.addEventListener('click', () => { getItems(1) });
+            });
+            $('.prev').each(function() {
+                this.addEventListener('click', () => { getItems(-1) });
+            });
+            getItems(0);
+        }
+
+        $(invokeMeOnLoad);
     </script>
 </head>
 
 <body>
     <%- include('header', { user: locals.user }) %>
     <div class='big-container'>
-        <aside></aside>
+        <aside>
+            <h1>Filters</h1>
+            <label for="searchphrase">Name:</label>
+            <input type="text" id="searchphrase"><br>
+            <label for="available">Availability:</label>
+            <input type="checkbox" id="available"><br>
+            <button id="submit" onclick="i = 0; getItems(0)">Search</button>
+        </aside>
         <main>
-            <div id='buttons'>
-                <button id='prev-page' class='button-arrow'><-</button>
-                <button id='next-page' class='button-arrow'>-></button>
+            <div class='buttons'>
+                <button class='prev'>&larr;</button>
+                <span class="pgcnt"></span>
+                <button class='next'>&rarr;</button>
             </div>
             <div class='container'>
             </div>
-            <div id='buttons'>
-                <button id='prev-page' class='button-arrow'><-</button>
-                <button id='next-page' class='button-arrow'>-></button>
+            <div class='buttons'>
+                <button class='prev'>&larr;</button>
+                <span class="pgcnt"></span>
+                <button class='next'>&rarr;</button>
             </div>
         </main>
     </div>

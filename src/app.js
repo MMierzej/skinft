@@ -57,13 +57,13 @@ const { createHash } = require('crypto');
 
     app.post('/items', upload.single(), async (req, res) => {
         // req.body -- filters
-        let pageNo = req.body.pageNo || 0;
-        let skinsOnPage = req.body.skinsOnPage || 18;
-
-        const result = await Skin.find({})
+        const result = await Skin.find({
+            name: { $regex: `${req.body.name}`, $options: "i" },
+            status: ('true' == req.body.available) || { $exists: true }
+        })
             .lean()
-            .skip(pageNo * skinsOnPage)
-            .limit(skinsOnPage);
+            .skip(req.body.page * req.body.itemsOnPage)
+            .limit(req.body.itemsOnPage);
         res.json(result);
     });
 
