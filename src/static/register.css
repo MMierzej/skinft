@@ -6,7 +6,7 @@ html, body {
 #bigContainer
 {
     width: 100%;
-    height: 80%;
+    min-height: 80%;
     background-color: #81b7d2;
     float: left;
     display: flex;
