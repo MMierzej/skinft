@@ -12,19 +12,19 @@
     <script>
         var i = 0;
 
-        async function getItems() {
-            let container = $('.container');
-            let itemsOnPage = 2;
-            let form = new FormData();
-            form.append('page', i);
-            form.append('itemsOnPage', itemsOnPage);
-            form.append('name', $('#searchphrase').val());
-            form.append('available', $('#available').is(':checked'));
-
+        async function getItems(change) {
+            i += change;
             if (i < 0) {
                 i = 0;
                 return;
             }
+
+            let container = $('.container');
+            let form = new FormData();
+            form.append('page', i);
+            form.append('itemsOnPage', 3);
+            form.append('name', $('#searchphrase').val());
+            form.append('available', $('#available').is(':checked'));
 
             let result = await fetch('/items', {
                 method: 'POST',
@@ -58,12 +58,12 @@
 
         function invokeMeOnLoad() {
             $('.next').each(function() {
-                this.addEventListener('click', () => { i++; getItems() });
+                this.addEventListener('click', () => { getItems(1) });
             });
             $('.prev').each(function() {
-                this.addEventListener('click', () => { i--; getItems() });
+                this.addEventListener('click', () => { getItems(-1) });
             });
-            getItems();
+            getItems(0);
         }
 
         $(invokeMeOnLoad);
@@ -77,9 +77,9 @@
             <h1>Filters</h1>
             <label for="searchphrase">Name:</label>
             <input type="text" id="searchphrase"><br>
-            <label for="available">Availability</label>
+            <label for="available">Availability:</label>
             <input type="checkbox" id="available"><br>
-            <button id="submit" onclick="i = 0; getItems()">Search</button>
+            <button id="submit" onclick="i = 0; getItems(0)">Search</button>
         </aside>
         <main>
             <div class='buttons'>
