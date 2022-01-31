@@ -53,8 +53,6 @@ const { createHash } = require('crypto');
 
     app.post('/items', upload.single(), async (req, res) => {
         // req.body -- filters
-        console.log(req.body);
-
         const result = await Skin.find({
             name: { $regex: `${req.body.name}`, $options: "i" },
             status: ('true' == req.body.available) || { $exists: true }
@@ -221,8 +219,6 @@ const { createHash } = require('crypto');
     });
 
     app.post('/register', upload.single(), auth, async (req, res) => {
-        console.log(req.body);
-
         if (req.session.userid) {
             res.redirect('/?message=' + 'Already logged in.');
         } else {
