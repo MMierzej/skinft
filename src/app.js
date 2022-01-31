@@ -53,13 +53,15 @@ const { createHash } = require('crypto');
 
     app.post('/items', upload.single(), async (req, res) => {
         // req.body -- filters
-        let pageNo = req.body.pageNo || 0;
-        let skinsOnPage = req.body.skinsOnPage || 18;
+        console.log(req.body);
 
-        const result = await Skin.find({})
+        const result = await Skin.find({
+            name: { $regex: `${req.body.name}`, $options: "i" },
+            status: ('true' == req.body.available) || { $exists: true }
+        })
             .lean()
-            .skip(pageNo * skinsOnPage)
-            .limit(skinsOnPage);
+            .skip(req.body.page * req.body.itemsOnPage)
+            .limit(req.body.itemsOnPage);
         res.json(result);
     });
 
@@ -302,9 +304,9 @@ const { createHash } = require('crypto');
     app.get('/cart', async (req, res) => {
         if (req.session.userid) {
             const response = [];
-            for(const name of req.session.cart) {
+            for (const name of req.session.cart) {
                 const skin = await Skin.findOne({ name }).lean().exec();
-                response.push( {
+                response.push({
                     name: skin.name,
                     priceUsd: skin.priceUsd,
                     thumbnail: skin.thumbnail,
