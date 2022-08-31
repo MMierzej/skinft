@@ -39,13 +39,22 @@ const { createHash } = require('crypto');
     app.use(express.urlencoded({ extended: true }));
     app.use(cookieParser());
     app.use(sessions({
-        secret: JSON.parse(fs.readFileSync('./src/secret-data.json', 'utf-8')).sessionSecret,
+        secret: ((sessionSecret) => {
+            try {
+                sessionSecret = JSON.parse(fs.readFileSync('./src/secret-data.json', 'utf-8')).sessionSecret;
+            } catch (error) {
+                console.error(error);
+            }
+            return sessionSecret;
+        })('defaultSecret'),
         saveUninitialized: true,
         cookie: { maxAge: 1000 * 60 * 60 * 24 * 1 }, // a day
         resave: false,
         store: MongoStore.create({ client: dbConn.getClient() })
     }));
 
+
+    // routing
 
     app.get('/', upload.single(), (req, res) => {
         if (req.session.userid) {
@@ -249,7 +258,7 @@ const { createHash } = require('crypto');
         }
     });
 
-    app.get('/logout', (req, res) => {  // chyba tymczasowo get 
+    app.get('/logout', (req, res) => {  // temporarily get 
         if (req.session.userid) {
             req.session.destroy();
         }
