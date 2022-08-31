@@ -10,7 +10,7 @@ const mongoose = require('mongoose');
 // }
 
 [root, password] = ['root', 'toor'];
-const dbUrl = `mongodb://${root}:${password}@mongo:27017/local?authSource=admin`;
+const dbUrl = `mongodb://${root}:${password}@mongo:27017/skinft?authSource=admin`;
 // const dbUrl = `mongodb+srv://${root}:${password}@weppo-project.yolqd.mongodb.net/SKINFT?retryWrites=true&w=majority`;
 
 module.exports = async function () {

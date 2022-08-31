@@ -1,14 +1,14 @@
 'use strict';
 
 require('ejs');
-const fs = require('fs');
-const http = require('http');
-const multer = require('multer');
-const express = require('express');
-const sessions = require('express-session');
-const MongoStore = require('connect-mongo');
 const cookieParser = require('cookie-parser');
 const { createHash } = require('crypto');
+const express = require('express');
+const fs = require('fs');
+const http = require('http');
+const MongoStore = require('connect-mongo');
+const multer = require('multer');
+const sessions = require('express-session');
 
 
 (async () => {
@@ -20,7 +20,7 @@ const { createHash } = require('crypto');
     const app = express();
     const fileStorageEngine = multer.diskStorage({
         destination: (req, file, cb) => {
-            cb(null, "./images");
+            cb(null, ".");
         },
         filename: (() => {
             let cnt = 0;
