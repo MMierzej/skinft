@@ -287,9 +287,9 @@ const sessions = require('express-session');
                 }
             }
             await newOrder.save();
-            res.json('order placed, you monkey');
+            res.json('Your order has been placed.');
         } else {
-            res.json('failed');
+            res.json('Failure while placing your order.');
         }
     });
 
@@ -301,7 +301,7 @@ const sessions = require('express-session');
                 return;
             }
         }
-        res.json('fail');
+        res.json('You must be logged in to add items to the cart.');
     });
 
     app.post('/remove-item/:name', (req, res) => {

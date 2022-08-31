@@ -4,7 +4,7 @@
     <% if (locals.user) { %> <a href='/logout' class='headButton'>Logout</a> <% } %>
     <% if (locals.admin) { %> <a href='/new-item' class='headButton'>Add item</a> <a href='/admin' class='headButton'>Admin page</a> <% } %>
 
-    <% if (locals.user) { %> <span class='headButton'><%= "Welcome " + user %> <% } %></span>
+    <% if (locals.user) { %> <span class='headButton'><%= "Welcome, " + user %> <% } %></span>
     <% if (locals.user && !locals.admin) { %> <button id="buttonOpen">Cart</button> <% } %>
 </header>
 
