@@ -5,7 +5,7 @@
 <!-- ![Front page with user logged in](./images/screenshots/frontpage.png) -->
 <img src="./images/screenshots/frontpage.png" alt="Front page with a user logged in" width=700>
 
-###### Authors are aware that the front-end is not the strongest point of this project, however it was never meant to be.
+###### Authors are aware that the front-end is not the strongest point of this project.
 
 ## Features
 
