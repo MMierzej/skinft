@@ -27,6 +27,12 @@
     - modify existing items
     - view users & orders
 - session management
+- items have:
+    - customizable thumbnail and the main image
+    - price
+    - availability status (updated after getting purchased)
+    - description
+    - a page to view their details
 
 ### Implementation
 - 2 separate Docker containers with fully automated setup, running the website, and the database
@@ -47,7 +53,7 @@ In the root of this repository on your local machine execute:
   
 ```docker compose up [-d]```  
   
-`-d` option runs the set of containers in the detached mode.
+`-d` option runs the set of containers in detached mode
   
 It's advisable to wait a couple of seconds to give the containers time to set up properly (possible a little longer, if the images need to be downloaded beforehand).  
 Then, the service is available at `http://localhost:3000`.
