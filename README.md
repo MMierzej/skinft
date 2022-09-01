@@ -2,14 +2,16 @@
 
 ### A full-stack team project built using Node.js, Express.js, and MongoDB
 
-<!-- ![Front page with user logged in](./images/screenshots/frontpage.png) -->
+  
 <img src="./images/screenshots/frontpage.png" alt="Front page with a user logged in" width=700>
 
+##### See also other [screenshots](./images/screenshots/).
 ###### Authors are aware that the front-end is not the strongest point of this project.
 
 ## Features
 
 ### Functionalities
+
 - anonymous user:
     - browsing items
     - simple filtering: by name, by availability
@@ -33,6 +35,7 @@
     - availability status (updated after getting purchased)
     - description
     - a page to view their details
+
 
 ### Implementation
 - 2 separate Docker containers with fully automated setup, running the website, and the database
